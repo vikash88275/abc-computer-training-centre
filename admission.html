@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary SEO Metadata -->
+  <title>Student Admission Portal | ABC Computer Training Centre</title>
+  <meta name="description" content="Fill and submit your admission form online, draw digital signature, retrieve submitted admission receipts, and print verification slips.">
+  <meta name="keywords" content="online computer admission form, register computer course Dabra, student notes download, DCA study material, Tally Prime notes PDF, basic computer ebook">
+  <meta name="author" content="Vikash Sahu">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Student Admission Portal | ABC Computer Training Centre">
+  <meta property="og:description" content="Fill and submit your admission form online, draw digital signature, retrieve submitted admission receipts, and print verification slips.">
+  <meta property="og:image" content="assets/images/computer_lab_classroom.png">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Mrs+Saint+Delafield&family=Outfit:wght@400;600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>  <!-- Sticky Premium Navigation Header -->
+  <header class="header">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><img src="assets/images/logo_icon.png" alt="ABC Logo"></div>
+        <div class="logo-text">
+          ABC Computer Training Centre
+          <span>DABRA - NO. 1 INSTITUTE</span>
+        </div>
+      </a>
+      
+      <button class="mobile-toggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      
+      <nav class="nav-menu-wrapper">
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link ">Home</a></li>
+          <li><a href="about.html" class="nav-link ">About</a></li>
+          <li><a href="courses.html" class="nav-link ">Courses</a></li>
+          <li><a href="placements.html" class="nav-link ">Placements</a></li>
+          <li><a href="gallery.html" class="nav-link ">Gallery</a></li>
+          <li><a href="blog.html" class="nav-link ">Blog</a></li>
+          <li><a href="contact.html" class="nav-link ">Contact</a></li>
+          <li><a href="admission.html" class="nav-cta">Apply Now</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>  <!-- Page Banner -->
+  <section class="page-banner no-print">
+    <div class="container text-center reveal active">
+      <h1 style="font-size: 2.5rem; font-weight: 800; color: white;">Student Admission Portal</h1>
+      <p style="color: #c7d2fe; font-size: 1.1rem; margin-top: 0.5rem;">Submit forms online, verify receipts, and view enrollment details.</p>
+    </div>
+  </section>
+
+  <!-- Admission Section -->
+  <section class="section-padding bg-light" style="padding-top: 4rem;">
+    <div class="container" style="max-width: 900px; padding: 0;">
+      
+      <!-- View 1: Selection Dashboard -->
+      <div id="portal-selection-view" class="admission-portal-card reveal active">
+        <h2 style="text-align: center; margin-bottom: 0.5rem; color: var(--neutral-darker);">ABC Computer Training Centre</h2>
+        <p style="text-align: center; color: var(--neutral-gray); margin-bottom: 3rem; font-weight: 600;">Admission Portal & Admin Dashboard</p>
+        <div class="grid-3" style="gap: 2rem;">
+          <div id="btn-select-new" style="background: var(--neutral-lighter); border: 1px solid var(--neutral-border); padding: 2rem; border-radius: var(--radius-lg); text-align: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: all var(--transition-normal);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">&#9997;&#65039;</div>
+            <h3 style="font-size: 1.25rem; color: var(--neutral-darker); margin-bottom: 0.5rem;">New Admission</h3>
+            <p style="font-size: 0.88rem; color: var(--neutral-gray);">Fill in enrollment details and submit application.</p>
+          </div>
+          <div id="btn-select-check" style="background: var(--neutral-lighter); border: 1px solid var(--neutral-border); padding: 2rem; border-radius: var(--radius-lg); text-align: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: all var(--transition-normal);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">&#128269;</div>
+            <h3 style="font-size: 1.25rem; color: var(--neutral-darker); margin-bottom: 0.5rem;">Check Your Form</h3>
+            <p style="font-size: 0.88rem; color: var(--neutral-gray);">Retrieve submitted receipt using name & DOB.</p>
+          </div>
+          <div id="btn-select-records" style="background: var(--neutral-lighter); border: 1px solid var(--neutral-border); padding: 2rem; border-radius: var(--radius-lg); text-align: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: all var(--transition-normal);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">&#128274;</div>
+            <h3 style="font-size: 1.25rem; color: var(--neutral-darker); margin-bottom: 0.5rem;">Record Portal</h3>
+            <p style="font-size: 0.88rem; color: var(--neutral-gray);">Admin access for records, payments & slips.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 2: Check Credentials View -->
+      <div id="portal-check-view" class="admission-portal-card" style="display: none; max-width: 500px; margin: 0 auto;">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--neutral-darker); text-align: center;">Retrieve Admission Form</h3>
+        <form id="check-form">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="check-name" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Student Full Name</label>
+            <input type="text" id="check-name" class="form-control" style="width: 100%; padding: 0.75rem;" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="check-password" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Password (Date of Birth)</label>
+            <input type="text" id="check-password" placeholder="DD/MM/YYYY" class="form-control" style="width: 100%; padding: 0.75rem;" required>
+            <span style="display: block; font-size: 0.8rem; color: var(--neutral-gray); margin-top: 0.25rem;">Format: DD/MM/YYYY or YYYY-MM-DD</span>
+          </div>
+          <div id="check-error-msg" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600;"></div>
+          <div style="display: flex; gap: 1rem;">
+            <button type="button" id="btn-back-check" class="btn btn-secondary" style="flex: 1; text-align: center; justify-content: center;">Back</button>
+            <button type="submit" class="btn btn-primary" style="flex: 2; text-align: center; justify-content: center;">Retrieve Form</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- View 3: New Form View -->
+      <div id="portal-new-view" class="admission-portal-card" style="display: none;">
+        <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 2rem; border-bottom: 1px solid var(--neutral-border); padding-bottom: 1rem;">
+          <button type="button" id="btn-back-new" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Back to Options</button>
+          <h3 id="admission-form-title" style="font-size: 1.6rem; color: var(--neutral-darker); margin: 0;">Online Enrollment Form</h3>
+        </div>
+        
+        <form id="admission-form">
+          <div class="form-group-grid">
+            <div class="form-group">
+              <label for="form-sno" style="font-weight: 600;">Enrollment / S.No (Auto)</label>
+              <input type="text" id="form-sno" class="form-control" readonly style="background: var(--neutral-light); font-weight: 700; color: var(--primary);">
+            </div>
+            <div class="form-group">
+              <label for="form-date" style="font-weight: 600;">Admission Date</label>
+              <input type="date" id="form-date" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-group-grid">
+            <div class="form-group">
+              <label for="form-name" style="font-weight: 600;">Student Name *</label>
+              <input type="text" id="form-name" class="form-control" placeholder="Enter student's full name" required>
+            </div>
+            <div class="form-group">
+              <label for="form-father" style="font-weight: 600;">Father's / Husband's Name *</label>
+              <input type="text" id="form-father" class="form-control" placeholder="Enter father or husband name" required>
+            </div>
+          </div>
+
+          <div class="form-group-grid">
+            <div class="form-group">
+              <label for="form-mother" style="font-weight: 600;">Mother's Name *</label>
+              <input type="text" id="form-mother" class="form-control" placeholder="Enter mother's name" required>
+            </div>
+            <div class="form-group">
+              <label for="form-dob" style="font-weight: 600;">Date of Birth *</label>
+              <input type="date" id="form-dob" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-group-grid">
+            <div class="form-group">
+              <label for="form-qualification" style="font-weight: 600;">Qualification *</label>
+              <input type="text" id="form-qualification" class="form-control" placeholder="e.g. 10th, 12th, Graduate" required>
+            </div>
+            <div class="form-group">
+              <label for="form-address" style="font-weight: 600;">Permanent Address *</label>
+              <input type="text" id="form-address" class="form-control" placeholder="Enter full local address" required>
+            </div>
+          </div>
+
+          <div class="form-group-grid">
+            <div class="form-group">
+              <label for="form-mobile" style="font-weight: 600;">Mobile Number *</label>
+              <input type="tel" id="form-mobile" class="form-control" placeholder="Enter 10-digit number" required>
+            </div>
+            <div class="form-group">
+              <label for="form-aadhar" style="font-weight: 600;">Aadhar Card No *</label>
+              <input type="text" id="form-aadhar" class="form-control" placeholder="Enter 12-digit Aadhar number" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="form-email" style="font-weight: 600;">Email Address *</label>
+            <input type="email" id="form-email" class="form-control" placeholder="student@example.com" required>
+          </div>
+
+          <!-- Photo Upload Block -->
+          <div class="form-group-grid form-grid-photo-split" style="align-items: center; margin-top: 1rem; margin-bottom: 1.5rem;">
+            <div class="form-group">
+              <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Student Passport Photo *</label>
+              <input type="file" id="form-photo-upload" accept="image/*" style="display: none;">
+              <button type="button" class="btn btn-secondary" id="btn-upload-trigger" style="width: 100%; justify-content: center; padding: 0.75rem;">Upload Photo (Max 2MB)</button>
+            </div>
+            <div id="photo-preview-box" class="receipt-photo-box" style="width: 95px; height: 110px; border: 1.5px dashed var(--neutral-border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--neutral-gray); font-weight: 600; background: var(--neutral-light); text-align: center; margin-left: auto;">
+              <span>PHOTO PREVIEW</span>
+            </div>
+          </div>
+
+          <!-- Courses Categories Group -->
+          <div class="form-group" style="margin-top: 2rem; margin-bottom: 2rem;">
+            <label style="font-weight: 700; display: block; margin-bottom: 1rem; color: var(--neutral-darker); border-bottom: 1px solid var(--neutral-border); padding-bottom: 0.5rem; font-size: 1.05rem;">Select Course *</label>
+            <div class="grid-4" style="gap: 1.5rem; align-items: start;">
+              
+              <div>
+                <h4 style="font-size: 0.88rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 700; border-bottom: 2px solid var(--primary-light); padding-bottom: 4px;">2 Months</h4>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; cursor: pointer;"><input type="radio" name="course-choice" value="basic" required> Basic Computer</label>
+              </div>
+
+              <div>
+                <h4 style="font-size: 0.88rem; color: var(--secondary); text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 700; border-bottom: 2px solid var(--secondary-light); padding-bottom: 4px;">3 Months</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="radio" name="course-choice" value="ccc"> CCC</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="radio" name="course-choice" value="tally"> Tally Prime + GST</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="radio" name="course-choice" value="msoffice"> MS Office Suite</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="radio" name="course-choice" value="typing"> Data Entry Operator</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="radio" name="course-choice" value="programming"> Coding Master</label>
+                </div>
+              </div>
+
+              <div>
+                <h4 style="font-size: 0.88rem; color: var(--neutral-gray); text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 700; border-bottom: 2px solid var(--neutral-border); padding-bottom: 4px;">6 Months</h4>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; cursor: pointer;"><input type="radio" name="course-choice" value="basic_6m"> Basic (6 Months)</label>
+              </div>
+
+              <div>
+                <h4 style="font-size: 0.88rem; color: var(--secondary); text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 700; border-bottom: 2px solid var(--secondary-light); padding-bottom: 4px;">1 Year</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="radio" name="course-choice" value="adca"> ADCA</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="radio" name="course-choice" value="dca"> DCA Diploma</label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"><input type="radio" name="course-choice" value="pgdca"> PGDCA Diploma</label>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Fees Split Box -->
+          <div class="form-group-grid form-grid-3" style="background: var(--neutral-light); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--neutral-border); margin-bottom: 2rem;">
+            <div class="form-group">
+              <label for="form-total-fee" style="font-weight: 700; color: var(--neutral-darker);">Total Course Fee (&#8377;) *</label>
+              <input type="number" id="form-total-fee" class="form-control" style="background: white;" required>
+            </div>
+            <div class="form-group">
+              <label for="form-paid-fee" style="font-weight: 700; color: var(--primary);">Amount Paid Now (&#8377;) *</label>
+              <input type="number" id="form-paid-fee" class="form-control" style="background: white;" placeholder="0" required>
+            </div>
+            <div class="form-group">
+              <label for="form-due-fee" style="font-weight: 700; color: #ef4444;">Balance Dues (&#8377;)</label>
+              <input type="number" id="form-due-fee" class="form-control" style="font-weight:700; background: var(--neutral-border); color: #ef4444;" readonly value="0">
+            </div>
+          </div>
+
+          <!-- Payment Mode Selection -->
+          <div class="form-group" style="margin-bottom: 2rem;">
+            <label style="font-weight: 700; display: block; margin-bottom: 0.5rem;">Payment Method *</label>
+            <div style="display: flex; gap: 2rem; align-items: center;">
+              <label style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; cursor: pointer;"><input type="radio" name="form-payment-status" value="Online" required> Online Transfer (UPI / NetBanking)</label>
+              <label style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; cursor: pointer;"><input type="radio" name="form-payment-status" value="Offline" required> Offline Cash Payment</label>
+            </div>
+          </div>
+
+          <!-- Signature Pad -->
+          <div class="form-group" style="margin-bottom: 2.5rem;">
+            <label for="form-signature-text" style="font-weight: 700; display: block; margin-bottom: 0.5rem;">Student Signature *</label>
+            <input type="text" id="form-signature-text" class="form-control" placeholder="Type your full name as signature validation..." required style="margin-bottom: 1rem;">
+            <label style="font-weight: 600; display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--neutral-gray);">Or Draw Signature below:</label>
+            <canvas id="sig-canvas" width="450" height="120" style="border: 1px solid var(--neutral-border); border-radius: var(--radius-md); background: white; cursor: crosshair; display: block; max-width: 100%;"></canvas>
+            <button type="button" id="btn-sig-clear" class="btn btn-secondary" style="margin-top: 0.5rem; padding: 0.35rem 1rem; font-size: 0.8rem;">Clear Drawing</button>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; text-align: center; justify-content: center; padding: 0.9rem; font-size: 1.1rem;">Submit & Print Receipt</button>
+        </form>
+      </div>
+
+      <!-- View 4: Admin Auth View -->
+      <div id="portal-admin-auth-view" class="admission-portal-card" style="display: none; max-width: 450px; margin: 0 auto;">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--neutral-darker); text-align: center;">Administrator Portal</h3>
+        <form id="admin-auth-form">
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="admin-password" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Enter Password</label>
+            <input type="password" id="admin-password" class="form-control" style="width: 100%; padding: 0.75rem;" required>
+          </div>
+          <div id="admin-auth-error-msg" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; font-size: 0.88rem; font-weight: 600; text-align: center;"></div>
+          <div style="display: flex; gap: 1rem;">
+            <button type="button" id="btn-back-admin-auth" class="btn btn-secondary" style="flex: 1; text-align: center; justify-content: center;">Back</button>
+            <button type="submit" class="btn btn-primary" style="flex: 1.5; text-align: center; justify-content: center;">Access Records</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- View 5: Admin Dashboard Records View -->
+      <div id="portal-records-view" class="admission-portal-card" style="display: none; max-width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--neutral-border); padding-bottom: 1rem;">
+          <h2 style="font-size: 1.75rem; color: var(--neutral-darker); margin: 0;">Registered Students Ledger</h2>
+          <button type="button" id="btn-admin-logout" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.82rem; font-weight: 600;">Logout Dashboard</button>
+        </div>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; align-items: center;">
+          <input type="text" id="records-search-input" placeholder="Search S.No, Name, Mobile, Dues..." style="flex: 2; padding: 0.7rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md); min-width: 250px;">
+          <select id="records-course-filter" style="flex: 1; padding: 0.7rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md); min-width: 180px;">
+            <option value="all">All Courses</option>
+            <option value="basic">Basic Computer (2 Months)</option>
+            <option value="ccc">CCC</option>
+            <option value="tally">Tally Prime</option>
+            <option value="msoffice">MS Office</option>
+            <option value="typing">Data Entry Operator</option>
+            <option value="programming">Coding Master</option>
+            <option value="basic_6m">Basic (6 Months)</option>
+            <option value="adca">ADCA</option>
+            <option value="dca">DCA</option>
+            <option value="pgdca">PGDCA</option>
+          </select>
+          <span id="records-count-badge" class="badge badge-secondary" style="padding: 0.6rem 1rem; font-weight: 700; font-size: 0.9rem;">Total Forms: 0</span>
+        </div>
+
+        <!-- Aggregate Summary Widgets -->
+        <div class="grid-3" style="gap: 1.5rem; margin-bottom: 2.5rem;">
+          <div style="background: var(--neutral-lighter); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--primary); box-shadow: var(--shadow-sm);">
+            <div style="font-size: 0.8rem; color: var(--neutral-gray); font-weight: 700; text-transform: uppercase;">Aggregate Revenue</div>
+            <div id="admin-summary-total" style="font-size: 1.65rem; font-weight: 800; color: var(--neutral-darker); margin-top: 4px;">&#8377;0/-</div>
+          </div>
+          <div style="background: var(--neutral-lighter); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid #0d9488; box-shadow: var(--shadow-sm);">
+            <div style="font-size: 0.8rem; color: var(--neutral-gray); font-weight: 700; text-transform: uppercase;">Total Collected</div>
+            <div id="admin-summary-collected" style="font-size: 1.65rem; font-weight: 800; color: #0d9488; margin-top: 4px;">&#8377;0/-</div>
+          </div>
+          <div style="background: var(--neutral-lighter); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid #ef4444; box-shadow: var(--shadow-sm);">
+            <div style="font-size: 0.8rem; color: var(--neutral-gray); font-weight: 700; text-transform: uppercase;">Outstanding Dues</div>
+            <div id="admin-summary-dues" style="font-size: 1.65rem; font-weight: 800; color: #ef4444; margin-top: 4px;">&#8377;0/-</div>
+          </div>
+        </div>
+
+        <!-- Records Table Grid -->
+        <div style="overflow-x: auto; border: 1px solid var(--neutral-border); border-radius: var(--radius-md); background: white;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+            <thead>
+              <tr style="background: var(--neutral-light); border-bottom: 2px solid var(--neutral-border); font-weight: 700; color: var(--neutral-darker);">
+                <th style="padding: 1rem;">S.No</th>
+                <th style="padding: 1rem;">Student Details</th>
+                <th style="padding: 1rem;">Course</th>
+                <th style="padding: 1rem;">Mobile</th>
+                <th style="padding: 1rem;">Fees Details</th>
+                <th style="padding: 1rem;">Dues</th>
+                <th style="padding: 1rem; text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="records-table-body">
+              <!-- JS renders lists here -->
+            </tbody>
+          </table>
+        </div>
+
+        <button type="button" id="btn-back-records" class="btn btn-secondary" style="margin-top: 2rem; display: block; margin-left: auto; margin-right: auto; padding: 0.65rem 2rem;">Back to Options</button>
+      </div>
+
+      <!-- View 7: Student Notes Portal View -->
+      <div id="portal-notes-view" class="admission-portal-card" style="display: none; max-width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--neutral-border); padding-bottom: 1rem;">
+          <div>
+            <h2 style="font-size: 1.75rem; color: var(--neutral-darker); margin: 0;">&#128221; Student Notes Portal</h2>
+            <p style="font-size: 0.88rem; color: var(--neutral-gray); margin-top: 4px;">Access and study your course notes, fundamental guides, and Tally worksheets.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <button type="button" id="btn-add-note-trigger" class="btn btn-primary" style="padding: 0.4rem 1.5rem; font-size: 0.82rem; font-weight: 600;">+ Add Note</button>
+            <button type="button" id="btn-back-notes" class="btn btn-secondary" style="padding: 0.4rem 1.5rem; font-size: 0.82rem; font-weight: 600;">Back to Options</button>
+          </div>
+        </div>
+
+        <div style="max-width: 900px; margin: 0 auto;">
+          <!-- Right: Saved Notes List / Folder Navigation -->
+          <div>
+            <!-- Folder Selection View (shown by default) -->
+            <div id="notes-folders-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;"></div>
+
+            <!-- Notes List View (hidden until folder is clicked) -->
+            <div id="notes-list-view" style="display: none;">
+              <!-- Navigation Header -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: var(--neutral-light); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--neutral-border);">
+                <span id="notes-folder-breadcrumb" style="font-size: 0.9rem; font-weight: 700; color: var(--neutral-darker); display: flex; align-items: center; gap: 0.5rem; user-select: none;">
+                  &#128193; Student Notes &gt; <span id="notes-folder-name-tag" style="text-transform: uppercase; color: var(--primary);">Tally</span>
+                </span>
+                <button type="button" onclick="window.backToNotesFolders()" class="btn btn-secondary" style="padding: 0.3rem 0.85rem; font-size: 0.8rem; font-weight: 600;">&larr; Back to Folders</button>
+              </div>
+
+              <div style="display: none;">
+                <input type="text" id="notes-search-box" placeholder="Search notes in this folder..." style="flex: 1.5; padding: 0.65rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md); min-width: 180px;">
+                <select id="notes-filter-select" style="display: none;">
+                  <option value="all">All Subjects</option>
+                  <option value="basics">Basics</option>
+                  <option value="tally">Tally</option>
+                </select>
+              </div>
+
+              <!-- Notes List Target -->
+              <div id="notes-list-target" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; max-height: 560px; overflow-y: auto; padding: 0.5rem;">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <!-- Image Zoom Modal Overlay -->
+      <div id="image-zoom-modal" class="course-detail-modal no-print" style="display: none; align-items: center; justify-content: center; z-index: 10000; background: rgba(15, 23, 42, 0.95); opacity: 0; pointer-events: none; transition: opacity var(--transition-normal); position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
+        <div style="position: relative; max-width: 90%; max-height: 90%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <span id="close-zoom-modal" style="position: absolute; top: -2.5rem; right: 0; color: white; font-size: 2.5rem; cursor: pointer; font-weight: 700; user-select: none;">&times;</span>
+          <img id="zoomed-image-target" src="" alt="Zoomed View" style="max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: var(--radius-lg); border: 2px solid var(--neutral-border); box-shadow: var(--shadow-2xl); background: #000; display: block;">
+          <p id="zoomed-image-caption" style="color: var(--neutral-lighter); text-align: center; margin-top: 1rem; font-size: 1.05rem; font-weight: 600;"></p>
+        </div>
+      </div>
+
+      <!-- Add Note Modal Overlay -->
+      <div id="add-note-modal" class="course-detail-modal no-print" style="display: none; align-items: center; justify-content: center; z-index: 10000; background: rgba(15, 23, 42, 0.7); opacity: 0; pointer-events: none; transition: opacity var(--transition-normal); position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
+        <div class="admission-portal-card" style="width: 100%; max-width: 550px; padding: 2rem; position: relative; border-radius: var(--radius-lg); box-shadow: var(--shadow-2xl); background: white;">
+          <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--neutral-darker); font-weight: 800;">Add New Student Note</h3>
+          <form id="add-note-form">
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+              <label for="modal-note-title" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--neutral-darker);">Note Title *</label>
+              <input type="text" id="modal-note-title" class="form-control" style="width: 100%; padding: 0.7rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md);" placeholder="e.g. Excel Shortcut Keys Chart" required>
+            </div>
+            
+            <div class="form-group-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div class="form-group">
+                <label for="modal-note-folder" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--neutral-darker);">Folder *</label>
+                <select id="modal-note-folder" class="form-control" style="width: 100%; padding: 0.7rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md);" required>
+                  <option value="basics">Basics Folder</option>
+                  <option value="tally">Tally Folder</option>
+                  <option value="new_folder">+ Add New Folder...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="modal-note-type" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--neutral-darker);">File Type *</label>
+                <select id="modal-note-type" class="form-control" style="width: 100%; padding: 0.7rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md);" required>
+                  <option value="pdf">PDF Document</option>
+                  <option value="image">Photo / Image</option>
+                  <option value="doc">Word Document (.docx)</option>
+                  <option value="text">Plain Text Note</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="modal-new-folder-name-group" class="form-group" style="margin-bottom: 1.25rem; display: none;">
+              <label for="modal-new-folder-name" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--neutral-darker);">New Folder Name *</label>
+              <input type="text" id="modal-new-folder-name" class="form-control" style="width: 100%; padding: 0.7rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md);" placeholder="e.g. DCA Notes">
+            </div>
+            
+            <div id="modal-note-file-group" class="form-group" style="margin-bottom: 1.25rem;">
+              <label for="modal-note-file" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--neutral-darker);">Choose File (Photo / PDF / Word) *</label>
+              <input type="file" id="modal-note-file" class="form-control" style="width: 100%; padding: 0.5rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md); background: #f8fafc;" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+            </div>
+            
+            <div id="modal-note-text-group" class="form-group" style="margin-bottom: 1.5rem; display: none;">
+              <label for="modal-note-text" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--neutral-darker);">Note Details / Text Content *</label>
+              <textarea id="modal-note-text" class="form-control" style="width: 100%; height: 120px; padding: 0.7rem 1rem; border: 1px solid var(--neutral-border); border-radius: var(--radius-md); font-family: inherit; resize: vertical;" placeholder="Type your note content here..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+              <button type="button" id="btn-add-note-cancel" class="btn btn-secondary" style="padding: 0.55rem 1.5rem;">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="padding: 0.55rem 2rem;">Save Note</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      </div>
+
+      <!-- View 6: Double-bordered Printable Admission Card/Receipt Layout -->
+      <div id="portal-receipt-view" class="receipt-document" style="display: none;">
+        <div class="receipt-border-outer" style="border: 1.5px solid #000; padding: 4px; background: #fff;">
+          <div class="receipt-border-inner" style="position: relative; border: 1.5px solid #000; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <!-- Watermark Logo -->
+            <div class="fee-slip-watermark" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 260px; opacity: 0.05; pointer-events: none; filter: invert(100%) grayscale(100%) contrast(120%);"><img src="assets/images/logo_icon.png" alt="Watermark" style="width: 100%;"></div>
+
+            <!-- Receipt Header (Combined & Centered) -->
+            <div class="physical-receipt-header" style="display: flex; justify-content: center; align-items: center; margin-bottom: 1.5rem; width: 100%;">
+              <div class="physical-receipt-title-box" style="border: 1.5px solid #000; border-radius: 12px; padding: 8px 24px; text-align: center; font-family: 'Outfit', sans-serif; font-weight: 800; color: #000; min-width: 320px; line-height: 1.25;">
+                <div style="font-size: 1.8rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 900;">ABC COMPUTER</div>
+                <div style="font-size: 0.95rem; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 4px;">TRAINING CENTRE DABRA</div>
+              </div>
+            </div>
+
+            <!-- Subtitle Pill matching physical photo -->
+            <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+              <div style="border: 1px solid #000; border-radius: 20px; padding: 3px 20px; font-weight: bold; font-size: 0.92rem; text-transform: capitalize; font-family: sans-serif; letter-spacing: 0.5px;">Admission form</div>
+            </div>
+
+            <!-- S.No. and Date row matching physical photo -->
+            <div class="receipt-meta-row" style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; margin-bottom: 1.5rem; font-family: monospace;">
+              <div>S.No <span id="receipt-sno-val" class="receipt-underline-text" style="min-width: 120px; display: inline-block; text-align: left; border-bottom: 1px solid #000; padding: 0 5px; font-weight: bold;"></span></div>
+              <div>Date <span id="receipt-date-val" class="receipt-underline-text" style="min-width: 120px; display: inline-block; text-align: left; border-bottom: 1px solid #000; padding: 0 5px; font-weight: bold;"></span></div>
+            </div>
+
+            <!-- Student details & photo layout matching physical photo -->
+            <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; align-items: flex-start;">
+              <!-- Fields Column -->
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 0.95rem;">
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">Name</span>
+                  <span class="receipt-col-value" id="receipt-name-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">Father Name</span>
+                  <span class="receipt-col-value" id="receipt-father-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">Mother Name</span>
+                  <span class="receipt-col-value" id="receipt-mother-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">DOB</span>
+                  <span class="receipt-col-value" id="receipt-dob-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">Qualification</span>
+                  <span class="receipt-col-value" id="receipt-qualification-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">Address</span>
+                  <span class="receipt-col-value" id="receipt-address-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">Aadhar Card No</span>
+                  <span class="receipt-col-value" id="receipt-aadhar-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">Mob No</span>
+                  <span class="receipt-col-value" id="receipt-mobile-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+                <div class="receipt-row" style="display: flex; align-items: flex-end; width: 100%;">
+                  <span class="receipt-col-label" style="font-weight: bold; font-size: 0.95rem; min-width: 120px; color: #000;">Email ID</span>
+                  <span class="receipt-col-value" id="receipt-email-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; color: #000; min-height: 20px;"></span>
+                </div>
+              </div>
+              
+              <!-- Photo Box Container -->
+              <div style="flex-shrink: 0; width: 120px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin-top: 5px;">
+                <div id="receipt-photo-target" class="receipt-photo-box" style="width: 110px; height: 130px; border: 1px solid #000; background: #f8fafc; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; color: #64748b; overflow: hidden; text-transform: uppercase;">
+                  PHOTO
+                </div>
+              </div>
+            </div>
+
+            <!-- Courses Section matching physical photo -->
+            <div class="receipt-courses-section" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="display: inline-block; border: 1px solid #000; border-radius: 15px; padding: 2px 15px; font-weight: bold; font-size: 0.88rem; margin-bottom: 1rem; font-family: sans-serif;">Courses:-</div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 2rem;">
+                <!-- 2 Months -->
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="border: 1px solid #000; padding: 3px 8px; font-size: 0.8rem; font-weight: bold; min-width: 150px; text-align: center; text-transform: uppercase; white-space: nowrap;">
+                    2 Months Courses
+                  </div>
+                  <div id="chk-val-2m" style="flex-grow: 1; border-bottom: 1px solid #000; font-weight: bold; padding-left: 8px; min-height: 20px; font-family: sans-serif; font-size: 0.88rem; color: #000;"></div>
+                </div>
+
+                <!-- 3 Months -->
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="border: 1px solid #000; padding: 3px 8px; font-size: 0.8rem; font-weight: bold; min-width: 150px; text-align: center; text-transform: uppercase; white-space: nowrap;">
+                    3 Months Courses
+                  </div>
+                  <div id="chk-val-3m" style="flex-grow: 1; border-bottom: 1px solid #000; font-weight: bold; padding-left: 8px; min-height: 20px; font-family: sans-serif; font-size: 0.88rem; color: #000;"></div>
+                </div>
+
+                <!-- 6 Months -->
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="border: 1px solid #000; padding: 3px 8px; font-size: 0.8rem; font-weight: bold; min-width: 150px; text-align: center; text-transform: uppercase; white-space: nowrap;">
+                    6 Months Courses
+                  </div>
+                  <div id="chk-val-6m" style="flex-grow: 1; border-bottom: 1px solid #000; font-weight: bold; padding-left: 8px; min-height: 20px; font-family: sans-serif; font-size: 0.88rem; color: #000;"></div>
+                </div>
+
+                <!-- 1 Year -->
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="border: 1px solid #000; padding: 3px 8px; font-size: 0.8rem; font-weight: bold; min-width: 150px; text-align: center; text-transform: uppercase; white-space: nowrap;">
+                    1 Year Courses
+                  </div>
+                  <div id="chk-val-1y" style="flex-grow: 1; border-bottom: 1px solid #000; font-weight: bold; padding-left: 8px; min-height: 20px; font-family: sans-serif; font-size: 0.88rem; color: #000;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fees row matching physical photo -->
+            <div class="receipt-fees-row" style="display: flex; justify-content: space-between; font-size: 0.95rem; font-family: sans-serif; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+              <div class="receipt-fee-box" style="display: flex; align-items: flex-end; gap: 0.5rem; font-weight: bold; width: 45%;">
+                <span>Total Fee</span>
+                <span id="receipt-total-fee-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; min-height: 20px; color: #000;"></span>
+              </div>
+              <div class="receipt-fee-box" style="display: flex; align-items: flex-end; gap: 0.5rem; font-weight: bold; width: 45%;">
+                <span>Due Fee</span>
+                <span id="receipt-due-fee-val" style="flex-grow: 1; border-bottom: 1px solid #000; padding-left: 10px; font-weight: bold; min-height: 20px; color: #000;"></span>
+              </div>
+            </div>
+
+            <!-- Non-printed payment status to maintain state -->
+            <div style="display: none;">
+              <span id="receipt-payment-status-val"></span>
+            </div>
+
+            <!-- Signatures Row matching physical photo -->
+            <div class="receipt-signatures-row" style="display: flex; justify-content: space-between; font-size: 0.95rem; font-family: sans-serif; margin-top: 2rem;">
+              <div class="receipt-sig-block" style="display: flex; flex-direction: column; align-items: flex-start; width: 45%;">
+                <div class="receipt-sig-area" style="border-bottom: 1px solid #000; width: 100%; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 0.4rem;">
+                  <span id="receipt-sig-text-display" style="font-family: 'Caveat', cursive, sans-serif; font-size: 1.25rem;"></span>
+                  <img id="receipt-sig-image-display" src="" alt="Student Signature" style="display: none; max-height: 35px; margin: 0 auto;">
+                </div>
+                <span style="font-weight: bold;">Student. Sign.</span>
+              </div>
+              
+              <div class="receipt-sig-block" style="display: flex; flex-direction: column; align-items: flex-end; width: 45%;">
+                <div class="receipt-sig-area" style="border-bottom: 1px solid #000; width: 100%; height: 40px; display: flex; align-items: center; justify-content: center; font-family: 'Mrs Saint Delafield', cursive, sans-serif; font-size: 1.85rem; padding-top: 0; line-height: 1; margin-bottom: 0.4rem;">
+                  Vikash Sahu
+                </div>
+                <span style="font-weight: bold; text-align: right;">Director Sign.</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; gap: 1.25rem; justify-content: center; align-items: center;" class="no-print">
+          <button type="button" id="btn-receipt-back" class="btn btn-secondary" style="padding: 0.75rem 2rem;">Back</button>
+          <button type="button" id="btn-receipt-edit" class="btn btn-secondary" style="padding: 0.75rem 2rem; background: var(--secondary); color: white; border-color: var(--secondary); display: none;">Edit Form</button>
+          <a href="https://wa.me/918827512123" id="receipt-whatsapp-link" target="_blank" class="btn btn-accent" style="padding: 0.75rem 2rem; display: inline-flex; align-items: center; gap: 0.5rem; background: #25D366; color: white;">Confirm on WhatsApp</a>
+          <button type="button" id="btn-receipt-print" class="btn btn-primary" style="padding: 0.75rem 2rem;">Print Admission Form</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Fee Slip Modal shown inside Records Dashboard Grid (Landscape style edit) -->
+  <div id="fee-slip-modal" class="course-detail-modal no-print" style="display: none;">
+    <div class="fee-slip-modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--neutral-border); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+        <h4 style="font-size: 1.2rem; margin: 0; color: var(--neutral-darker); font-weight: 800;">Edit & Print Student Fee Slip</h4>
+        <button type="button" id="btn-fee-slip-cancel" style="border: none; background: transparent; font-size: 1.5rem; cursor: pointer; color: var(--neutral-gray); font-weight: 700;">&times;</button>
+      </div>
+      
+      <form id="fee-slip-input-form">
+        <!-- Landscape format editor -->
+        <div class="fee-slip-card" style="box-shadow: none; border: 1.5px solid var(--neutral-darker);">
+          
+          <div class="fee-slip-top-row">!! Shri Ganeshay Namah !!</div>
+          
+          <div class="fee-slip-header-main" style="align-items: flex-start;">
+            <div class="fee-slip-logo-icon" style="width: 42px; height: 42px; background: transparent;"><img src="assets/images/logo_icon.png" alt="ABC Logo" style="width: 100%;"></div>
+            <div class="fee-slip-title-block">
+              <div class="fee-slip-main-name" style="font-size: 1.85rem; font-weight: 900; letter-spacing: 1.5px;">ABC</div>
+              <div class="fee-slip-sub-name" style="font-size: 0.72rem; padding: 1px 6px;">Computer Training Center</div>
+            </div>
+            <div id="modal-fee-photo-target" style="width: 70px; height: 80px; border: 1px solid var(--neutral-darker); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; background: var(--neutral-light); overflow: hidden; flex-shrink: 0;">PHOTO</div>
+          </div>
+
+          <div class="fee-slip-address-ribbon" style="font-size: 0.72rem; padding: 2px 4px; font-weight: 700;">Near Temple, Kamleshwar Colony, Dabra, Gwalior (M.P.)</div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+            <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+              <span class="fee-slip-col-label">Enrollment No:</span>
+              <input type="text" id="fee-slip-sno" class="receipt-input" style="font-weight: 700;" readonly>
+            </div>
+            <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+              <span class="fee-slip-col-label">Admission Date:</span>
+              <input type="text" id="fee-slip-date" class="receipt-input" required>
+            </div>
+            <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+              <span class="fee-slip-col-label">Student Name:</span>
+              <input type="text" id="fee-slip-name" class="receipt-input" required>
+            </div>
+            <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+              <span class="fee-slip-col-label">Father's Name:</span>
+              <input type="text" id="fee-slip-father" class="receipt-input" required>
+            </div>
+            <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+              <span class="fee-slip-col-label">Course:</span>
+              <input type="text" id="fee-slip-course" class="receipt-input" required>
+            </div>
+            
+            <div class="fee-slip-grid-2">
+              <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+                <span class="fee-slip-col-label">Duration:</span>
+                <input type="text" id="fee-slip-duration" class="receipt-input" required>
+              </div>
+              <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+                <span class="fee-slip-col-label">D.O.B:</span>
+                <input type="text" id="fee-slip-dob" class="receipt-input" required>
+              </div>
+            </div>
+
+            <div class="fee-slip-grid-2">
+              <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+                <span class="fee-slip-col-label">Payment Mode:</span>
+                <select id="fee-slip-payment-status" class="receipt-input" style="border-bottom: 1.5px dotted #475569; width: 100%; outline: none; border-radius:0; cursor: pointer;">
+                  <option value="Online">Online</option>
+                  <option value="Offline">Offline</option>
+                </select>
+              </div>
+              <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+                <span class="fee-slip-col-label">Mobile No:</span>
+                <input type="text" id="fee-slip-mobile" class="receipt-input" required>
+              </div>
+            </div>
+
+            <div class="fee-slip-grid-2" style="border-top: 1px dashed var(--neutral-border); padding-top: 0.75rem; margin-top: 0.5rem;">
+              <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+                <span class="fee-slip-col-label">Total Fee (&#8377;):</span>
+                <input type="number" id="fee-slip-total-fee" class="receipt-fee-input" required style="width: 80px; border-bottom: 1.5px solid var(--neutral-darker);">
+              </div>
+              <div class="fee-slip-row" style="margin-bottom: 0.4rem;">
+                <span class="fee-slip-col-label">Paid (&#8377;):</span>
+                <input type="number" id="fee-slip-paid-fee" class="receipt-fee-input" required style="width: 80px; border-bottom: 1.5px solid var(--neutral-darker);">
+              </div>
+            </div>
+
+            <div class="fee-slip-row" style="margin-bottom: 0.8rem;">
+              <span class="fee-slip-col-label">Outstanding Dues (&#8377;):</span>
+              <input type="number" id="fee-slip-due-fee" class="receipt-fee-input" readonly style="width: 100px; font-weight:800; color: #ef4444; border-bottom: 1.5px solid var(--neutral-darker);">
+            </div>
+          </div>
+
+          <!-- Signature previews in modal edit slip -->
+          <div class="fee-slip-footer-row" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 1.5rem;">
+            <div class="fee-slip-sig-block" style="width: 120px;">
+              <div style="height: 30px; display: flex; align-items: center; justify-content: center; font-family: 'Caveat', cursive; font-size: 1.1rem; overflow: hidden;">
+                <span id="fee-slip-sig-text-display">Signature</span>
+                <img id="fee-slip-sig-image-display" src="" alt="Student Signature" style="display: none; max-height: 30px; margin: 0 auto;">
+              </div>
+              <div class="fee-slip-sig-line" style="font-size: 0.75rem; margin-top: 0.5rem;">Student Sig</div>
+            </div>
+            <div class="fee-slip-sig-block" style="width: 120px;">
+              <div style="height: 30px; display: flex; align-items: center; justify-content: center; font-family: 'Mrs Saint Delafield', cursive; font-size: 1.5rem; line-height: 1; color: var(--neutral-darker);">
+                Vikash Sahu
+              </div>
+              <div class="fee-slip-sig-line" style="font-size: 0.75rem; margin-top: 0.5rem;">Director Sig</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="fee-slip-error-msg" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 0.5rem; border-radius: var(--radius-md); margin-top: 1rem; font-size: 0.85rem; font-weight: 600; text-align: center;"></div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-secondary" style="flex: 1; justify-content: center;" onclick="const m=document.getElementById('fee-slip-modal');m.classList.remove('active');setTimeout(()=>m.style.display='none',300)">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="flex: 2; justify-content: center;">Save & Print Slip</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Read-only printable view hidden during admin layout operations -->
+  <div id="fee-slip-printable-view" class="receipt-document" style="display: none;">
+    <div class="receipt-border-outer" style="border: 1.5px solid #000; padding: 4px; background: #fff;">
+      <div class="receipt-border-inner" style="position: relative; border: 1.5px solid #000; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- Watermark Logo -->
+        <div class="fee-slip-watermark" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 260px; opacity: 0.05; pointer-events: none; filter: invert(100%) grayscale(100%) contrast(120%);"><img src="assets/images/logo_icon.png" alt="Watermark" style="width: 100%;"></div>
+
+        <!-- !! Shri Ganeshay Namah !! -->
+        <div style="text-align: center; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">!! Shri Ganeshay Namah !!</div>
+
+        <!-- Header Layout -->
+        <div class="receipt-header-layout" style="border-bottom: none; padding-bottom: 0.5rem; margin-bottom: 0;">
+          <div class="receipt-left-logo">
+            <img src="assets/images/logo_icon.png" alt="ABC Logo" class="receipt-logo-img" style="width: 70px; height: 60px; object-fit: contain;">
+          </div>
+          <div class="receipt-center-text">
+            <div class="receipt-institute-name" style="font-size: 2.2rem; letter-spacing: 2px;">ABC</div>
+            <div class="receipt-institute-sub" style="font-weight: 700; text-transform: uppercase;">Computer Training Centre</div>
+            <div class="receipt-institute-sub" style="border: none; padding: 0; font-size: 0.72rem; letter-spacing: 0.5px; margin-top: 3px;">Near Temple, Kamleshwar Colony, Dabra, Gwalior (M.P.)</div>
+          </div>
+          <div class="receipt-right-photo">
+            <div id="print-fee-photo-target" class="receipt-photo-box" style="width: 70px; height: 80px;">PHOTO</div>
+          </div>
+        </div>
+
+        <!-- Form Details Title -->
+        <div class="receipt-form-title-wrap" style="margin-top: 0.5rem;">
+          <span class="receipt-form-title" style="font-size: 1rem; padding: 0.25rem 1.5rem;">FEE SLIP</span>
+        </div>
+
+        <!-- Content Rows -->
+        <div class="receipt-fields-container" style="gap: 0.6rem; margin-top: 0.5rem;">
+          <div class="receipt-row-grid">
+            <div class="receipt-row flex-1">
+              <span class="receipt-col-label">Enrollment No:</span>
+              <span class="receipt-col-value" id="print-fee-sno"></span>
+            </div>
+            <div class="receipt-row" style="width: 250px;">
+              <span class="receipt-col-label">Admission Date:</span>
+              <span class="receipt-col-value" id="print-fee-date"></span>
+            </div>
+          </div>
+
+          <div class="receipt-row">
+            <span class="receipt-col-label">Student Name:</span>
+            <span class="receipt-col-value" id="print-fee-name"></span>
+          </div>
+
+          <div class="receipt-row">
+            <span class="receipt-col-label">Father's Name:</span>
+            <span class="receipt-col-value" id="print-fee-father"></span>
+          </div>
+
+          <div class="receipt-row">
+            <span class="receipt-col-label">Course:</span>
+            <span class="receipt-col-value" id="print-fee-course"></span>
+          </div>
+
+          <div class="receipt-row-grid">
+            <div class="receipt-row flex-1">
+              <span class="receipt-col-label">Duration:</span>
+              <span class="receipt-col-value" id="print-fee-duration"></span>
+            </div>
+            <div class="receipt-row" style="width: 250px;">
+              <span class="receipt-col-label">D.O.B:</span>
+              <span class="receipt-col-value" id="print-fee-dob"></span>
+            </div>
+          </div>
+
+          <div class="receipt-row-grid">
+            <div class="receipt-row flex-1">
+              <span class="receipt-col-label">Payment Mode:</span>
+              <span class="receipt-col-value" id="print-fee-payment-status"></span>
+            </div>
+            <div class="receipt-row" style="width: 250px;">
+              <span class="receipt-col-label">Mobile No:</span>
+              <span class="receipt-col-value" id="print-fee-mobile"></span>
+            </div>
+          </div>
+
+          <div class="receipt-row-grid" style="border-top: 1px dashed #0f172a; padding-top: 0.5rem; margin-top: 0.5rem;">
+            <div class="receipt-row flex-1">
+              <span class="receipt-col-label">Total Course Fee:</span>
+              <span class="receipt-col-value" id="print-fee-total" style="font-weight: 800;"></span>
+            </div>
+            <div class="receipt-row" style="width: 250px;">
+              <span class="receipt-col-label">Amount Paid:</span>
+              <span class="receipt-col-value" id="print-fee-paid" style="font-weight: 800; color: #0d9488;"></span>
+            </div>
+          </div>
+
+          <div class="receipt-row" style="margin-bottom: 1rem;">
+            <span class="receipt-col-label">Outstanding Dues:</span>
+            <span class="receipt-col-value" id="print-fee-due" style="font-weight: 800; font-size: 1.1rem; color: #ef4444;"></span>
+          </div>
+        </div>
+
+        <!-- Footer block for signatures -->
+        <div class="receipt-signatures-row" style="margin-top: 1.5rem; padding-bottom: 0;">
+          <div class="receipt-sig-block">
+            <div class="receipt-sig-area">
+              <span id="print-fee-sig-text-display">Signature</span>
+              <img id="print-fee-sig-image-display" src="" alt="Student Signature" style="display: none; max-height: 35px; margin: 0 auto;">
+            </div>
+            <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Student's Signature</div>
+          </div>
+          <div class="receipt-sig-block">
+            <div class="receipt-sig-area">
+              <span style="font-family: 'Caveat', cursive, sans-serif; font-weight: bold;">Vikash Sahu</span>
+            </div>
+            <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Director's Signature</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admission.js"></script>  <!-- Global Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Col 1: Brand & Bio -->
+        <div class="footer-about">
+          <a href="index.html" class="footer-logo">
+            <div class="footer-logo-icon"><img src="assets/images/logo_icon.png" alt="ABC Logo" style="width: 100%; height: 100%; object-fit: contain;"></div>
+            <div class="footer-logo-text">
+              ABC Computer Centre
+              <span>DABRA - NO. 1 INSTITUTE</span>
+            </div>
+          </a>
+          <p class="footer-about-text">
+            Dabra's leading computer training institute, empowering students with government recognized certifications and practical IT skills under Microsoft Certified Trainer Vikash Sahu.
+          </p>
+        </div>
+
+        <!-- Col 2: Navigation Links -->
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="courses.html">Our Courses</a></li>
+            <li><a href="placements.html">Student Placements</a></li>
+            <li><a href="gallery.html">Photo Gallery</a></li>
+            <li><a href="about.html">About Center</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Legal & Resources -->
+        <div>
+          <h4>Information</h4>
+          <ul class="footer-links">
+            <li><a href="blog.html">Educational Blogs</a></li>
+            <li><a href="admission.html">Admissions Form</a></li>
+            <li><a href="slip.html">Fee Slip</a></li>
+            <li><a href="payment.html">Payment</a></li>
+            <li><a href="admission.html?panel=notes">Student Notes</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="https://youtube.com/@vtecheducation6823?si=UzMafSh6oQNXRLgq" target="_blank">V Tech Education (YT)</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Reach Us -->
+        <div>
+          <h4>Get In Touch</h4>
+          <ul class="footer-contact-list">
+            <li>
+              <i><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor; display:block;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></i>
+              <div>
+                <strong>Location:</strong>
+                <p>Kamleshwar Colony, Near Kamleshwar Mahadev Temple, Dabra, Gwalior (M.P.) - 475110</p>
+              </div>
+            </li>
+            <li>
+              <i><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor; display:block;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></i>
+              <div>
+                <strong>Call Now:</strong>
+                <p>+91 88275 12123</p>
+              </div>
+            </li>
+            <li>
+              <i><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor; display:block;"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></i>
+              <div>
+                <strong>Email Address:</strong>
+                <p>vikash88275@gmail.com</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Bottom bar -->
+      <div class="footer-bottom">
+        <p>&copy; 2026 ABC Computer Training Centre. All Rights Reserved. Govt. Recognized & ISO 9001:2015 Certified.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Action Buttons -->
+  <div class="floating-widget-bar">
+    <a href="https://wa.me/918827512123" target="_blank" class="float-btn float-whatsapp" title="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24" style="width:28px; height:28px; fill:white;"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.122 8.122 0 0 1-1.24-4.38c0-4.49 3.65-8.15 8.15-8.15 2.18 0 4.22.85 5.75 2.38 1.53 1.53 2.38 3.57 2.38 5.75 0 4.49-3.66 8.16-8.17 8.16zm4.48-6.12c-.24-.12-1.45-.72-1.68-.8-.23-.08-.39-.12-.56.12-.17.24-.66.83-.8 1-.15.17-.29.19-.53.07-.24-.12-1.01-.37-1.92-1.19-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.29.37-.43.12-.14.17-.24.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.36-.77-1.85-.2-.5-.42-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.85.83-.85 2.02 0 1.19.87 2.34.99 2.5.12.17 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.17.2-.59.2-1.09.14-1.19-.06-.1-.23-.17-.47-.29z"/></svg>
+    </a>
+    <a href="tel:+918827512123" class="float-btn float-call" title="Call Us Now">
+      <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:white;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg>
+    </a>
+    <a href="https://youtube.com/@vtecheducation6823" target="_blank" class="float-btn float-youtube" title="Watch V Tech Education on YouTube">
+      <svg viewBox="0 0 24 24" style="width:26px; height:26px; fill:white;"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.507a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.507 9.388.507 9.388.507s7.517 0 9.388-.507a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </a>
+    <div class="float-btn float-top" title="Back to Top">
+      &#9650;
+    </div>
+  </div><script src="js/main.js"></script></body></html>

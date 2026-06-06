@@ -1,0 +1,13 @@
+# Disable delta compression on binary and pre-compressed media files
+*.mp4 -delta
+*.mp4 binary
+*.pdf -delta
+*.pdf binary
+*.png -delta
+*.png binary
+*.jpg -delta
+*.jpg binary
+*.jpeg -delta
+*.jpeg binary
+*.docx -delta
+*.docx binary

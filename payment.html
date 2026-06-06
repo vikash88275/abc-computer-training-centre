@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary SEO Metadata -->
+  <title>Online Fee Payment | ABC Computer Training Centre Dabra</title>
+  <meta name="description" content="Securely scan & pay course fees online using Google Pay or any UPI scanner. Instant verification and printable success chimes under MCT Vikash Sahu.">
+  <meta name="keywords" content="pay computer course fees online, UPI scan payment QR code, safe fee transfer, Google Pay computer institute">
+  <meta name="author" content="Vikash Sahu">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Online Fee Payment | ABC Computer Training Centre Dabra">
+  <meta property="og:description" content="Securely scan & pay course fees online using Google Pay or any UPI scanner. Instant verification and printable success chimes under MCT Vikash Sahu.">
+  <meta property="og:image" content="assets/images/computer_lab_classroom.png">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Mrs+Saint+Delafield&family=Outfit:wght@400;600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>  <!-- Sticky Premium Navigation Header -->
+  <header class="header">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><img src="assets/images/logo_icon.png" alt="ABC Logo"></div>
+        <div class="logo-text">
+          ABC Computer Training Centre
+          <span>DABRA - NO. 1 INSTITUTE</span>
+        </div>
+      </a>
+      
+      <button class="mobile-toggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      
+      <nav class="nav-menu-wrapper">
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link ">Home</a></li>
+          <li><a href="about.html" class="nav-link ">About</a></li>
+          <li><a href="courses.html" class="nav-link ">Courses</a></li>
+          <li><a href="placements.html" class="nav-link ">Placements</a></li>
+          <li><a href="gallery.html" class="nav-link ">Gallery</a></li>
+          <li><a href="blog.html" class="nav-link ">Blog</a></li>
+          <li><a href="contact.html" class="nav-link ">Contact</a></li>
+          <li><a href="admission.html" class="nav-cta">Apply Now</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>  <!-- Main Banner Header -->
+  <section class="inner-banner" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 8rem 0 4rem 0; text-align: center; color: white;">
+    <div class="container">
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.5px;">Online Fee Payment</h1>
+      <p style="font-size: 1.05rem; opacity: 0.9;">Securely scan & pay course fees instantly via UPI QR code</p>
+    </div>
+  </section>
+
+  <!-- Interactive Payment Simulator Section -->
+  <section class="section" style="padding: 4rem 0 6rem 0; background: var(--neutral-light);">
+    <div class="container" style="max-width: 500px;">
+      
+      <!-- CSS Styles for Animations & Interactive Elements -->
+      <style>
+        .admission-portal-card {
+          background: white;
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--neutral-border);
+          box-shadow: var(--shadow-md);
+          padding: 2.25rem;
+          transition: all 0.4s ease;
+        }
+        .admission-portal-card:hover {
+          box-shadow: var(--shadow-lg);
+        }
+        .qr-card-wrapper {
+          max-width: 320px;
+          margin: 0 auto;
+          background: white;
+          border: 1.5px solid var(--neutral-darker);
+          border-radius: var(--radius-lg);
+          overflow: hidden;
+          box-shadow: var(--shadow-sm);
+        }
+        .qr-card-header {
+          background: white;
+          padding: 1.25rem;
+          border-bottom: 1.5px solid var(--neutral-darker);
+          text-align: center;
+        }
+        .qr-card-image-wrapper {
+          padding: 0.5rem 1rem 1rem 1rem;
+          background: white;
+          display: flex;
+          justify-content: center;
+        }
+        .qr-card-image {
+          width: 100%;
+          max-width: 250px;
+          height: auto;
+          display: block;
+        }
+        .qr-card-footer {
+          background: #f8fafc;
+          padding: 1rem;
+          border-top: 1.5px solid var(--neutral-darker);
+          text-align: center;
+        }
+        .pulse-text {
+          animation: pulse-animation 1.5s infinite;
+          color: var(--secondary);
+          font-weight: 700;
+        }
+        @keyframes pulse-animation {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      </style>
+
+      <!-- State 1: Input Fee Amount -->
+      <div id="payment-input-section" class="admission-portal-card">
+        <h3 style="font-size: 1.35rem; color: var(--neutral-darker); margin-bottom: 0.75rem; text-align: center; font-weight: 800;">Initiate Payment</h3>
+        <p style="color: var(--neutral-gray); font-size: 0.88rem; text-align: center; margin-bottom: 1.75rem; line-height: 1.5;">Enter the amount you wish to pay. We will generate the secure Google Pay QR code for your payment.</p>
+        
+        <form id="payment-amount-form">
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="payment-amount" style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.95rem; color: var(--neutral-darker);">Amount to Pay (&#8377;)</label>
+            <input type="number" id="payment-amount" class="form-control" style="width: 100%; padding: 0.88rem; font-size: 1.25rem; font-weight: 800; text-align: center; color: var(--primary); border: 2px solid var(--primary-light); border-radius: var(--radius-md);" value="500" min="1" required>
+          </div>
+          <button type="submit" id="btn-generate-qr" class="btn btn-primary" style="width: 100%; padding: 0.88rem; justify-content: center; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md);">Proceed to Pay</button>
+        </form>
+      </div>
+
+      <!-- State 2: Display QR Simulator -->
+      <div id="payment-qr-section" class="admission-portal-card" style="display: none; padding: 1.75rem;">
+        <h3 style="font-size: 1.25rem; color: var(--neutral-darker); margin-bottom: 1.25rem; text-align: center; font-weight: 800;">Scan to Pay</h3>
+        
+        <!-- Google Pay Card Layout -->
+        <div class="qr-card-wrapper">
+          <div class="qr-card-header">
+            <img src="assets/images/logo_icon.png" alt="Logo" style="width: 32px; height: 32px; margin-bottom: 0.25rem;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: #1e293b; line-height: 1.2;">Google Pay</div>
+            <div style="font-size: 0.75rem; color: #64748b;">ABC Computer Training Centre</div>
+          </div>
+          <div class="qr-card-image-wrapper">
+            <img class="qr-card-image" src="assets/images/payment_qr.jpg" alt="Payment QR Code">
+          </div>
+          <div class="qr-card-footer">
+            <div style="font-size: 0.72rem; color: #64748b; font-weight: 700; font-family: monospace;">UPI ID: 8827512123-1@okbizaxis</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <div style="font-size: 1.2rem; font-weight: 800; color: var(--neutral-darker); margin-bottom: 1.25rem;">
+            Amount: <span style="color: var(--primary);">&#8377;<span id="qr-amount-display">500</span></span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--neutral-gray); margin-bottom: 1.5rem; line-height: 1.4;">
+            Scan the QR code with any UPI app to pay, then click below to confirm your payment with the faculty.
+          </p>
+          <a id="btn-wa-confirm-qr" href="#" target="_blank" class="btn" style="width: 100%; padding: 0.88rem; justify-content: center; font-size: 0.95rem; font-weight: 700; background: #25D366; color: white; border: none; border-radius: var(--radius-md); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: var(--shadow-sm);">
+            Confirm to Faculty (WhatsApp)
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <script src="js/payment.js"></script>  <!-- Global Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Col 1: Brand & Bio -->
+        <div class="footer-about">
+          <a href="index.html" class="footer-logo">
+            <div class="footer-logo-icon"><img src="assets/images/logo_icon.png" alt="ABC Logo" style="width: 100%; height: 100%; object-fit: contain;"></div>
+            <div class="footer-logo-text">
+              ABC Computer Centre
+              <span>DABRA - NO. 1 INSTITUTE</span>
+            </div>
+          </a>
+          <p class="footer-about-text">
+            Dabra's leading computer training institute, empowering students with government recognized certifications and practical IT skills under Microsoft Certified Trainer Vikash Sahu.
+          </p>
+        </div>
+
+        <!-- Col 2: Navigation Links -->
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="courses.html">Our Courses</a></li>
+            <li><a href="placements.html">Student Placements</a></li>
+            <li><a href="gallery.html">Photo Gallery</a></li>
+            <li><a href="about.html">About Center</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Legal & Resources -->
+        <div>
+          <h4>Information</h4>
+          <ul class="footer-links">
+            <li><a href="blog.html">Educational Blogs</a></li>
+            <li><a href="admission.html">Admissions Form</a></li>
+            <li><a href="slip.html">Fee Slip</a></li>
+            <li><a href="payment.html">Payment</a></li>
+            <li><a href="admission.html?panel=notes">Student Notes</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="https://youtube.com/@vtecheducation6823?si=UzMafSh6oQNXRLgq" target="_blank">V Tech Education (YT)</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Reach Us -->
+        <div>
+          <h4>Get In Touch</h4>
+          <ul class="footer-contact-list">
+            <li>
+              <i><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor; display:block;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></i>
+              <div>
+                <strong>Location:</strong>
+                <p>Kamleshwar Colony, Near Kamleshwar Mahadev Temple, Dabra, Gwalior (M.P.) - 475110</p>
+              </div>
+            </li>
+            <li>
+              <i><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor; display:block;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></i>
+              <div>
+                <strong>Call Now:</strong>
+                <p>+91 88275 12123</p>
+              </div>
+            </li>
+            <li>
+              <i><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor; display:block;"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></i>
+              <div>
+                <strong>Email Address:</strong>
+                <p>vikash88275@gmail.com</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Bottom bar -->
+      <div class="footer-bottom">
+        <p>&copy; 2026 ABC Computer Training Centre. All Rights Reserved. Govt. Recognized & ISO 9001:2015 Certified.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Action Buttons -->
+  <div class="floating-widget-bar">
+    <a href="https://wa.me/918827512123" target="_blank" class="float-btn float-whatsapp" title="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24" style="width:28px; height:28px; fill:white;"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.122 8.122 0 0 1-1.24-4.38c0-4.49 3.65-8.15 8.15-8.15 2.18 0 4.22.85 5.75 2.38 1.53 1.53 2.38 3.57 2.38 5.75 0 4.49-3.66 8.16-8.17 8.16zm4.48-6.12c-.24-.12-1.45-.72-1.68-.8-.23-.08-.39-.12-.56.12-.17.24-.66.83-.8 1-.15.17-.29.19-.53.07-.24-.12-1.01-.37-1.92-1.19-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.29.37-.43.12-.14.17-.24.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.36-.77-1.85-.2-.5-.42-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.85.83-.85 2.02 0 1.19.87 2.34.99 2.5.12.17 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.17.2-.59.2-1.09.14-1.19-.06-.1-.23-.17-.47-.29z"/></svg>
+    </a>
+    <a href="tel:+918827512123" class="float-btn float-call" title="Call Us Now">
+      <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:white;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg>
+    </a>
+    <a href="https://youtube.com/@vtecheducation6823" target="_blank" class="float-btn float-youtube" title="Watch V Tech Education on YouTube">
+      <svg viewBox="0 0 24 24" style="width:26px; height:26px; fill:white;"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.507a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.507 9.388.507 9.388.507s7.517 0 9.388-.507a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </a>
+    <div class="float-btn float-top" title="Back to Top">
+      &#9650;
+    </div>
+  </div><script src="js/main.js"></script></body></html>
