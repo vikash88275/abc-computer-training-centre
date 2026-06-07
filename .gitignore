@@ -9,4 +9,4 @@ dist/
 .vercel
 
 # Temporarily exclude videos for staged push
-assets/videos/
+# assets/videos/

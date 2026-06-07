@@ -325,9 +325,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxTitle = lightbox.querySelector('.lightbox-title');
 
     if (item.type === 'video') {
-      lightboxImgBox.innerHTML = `
-        <video src="${item.video}" controls autoplay style="width: 100%; max-height: 75vh; display: block; background: #000; outline: none; border-radius: var(--radius-sm);"></video>
-      `;
+      const vid = document.createElement('video');
+      vid.src = item.video;
+      vid.controls = true;
+      vid.autoplay = true;
+      vid.setAttribute('playsinline', '');   // required for iOS inline play
+      vid.setAttribute('webkit-playsinline', ''); // older iOS Safari
+      vid.style.cssText = 'width:100%; max-height:75vh; display:block; background:#000; outline:none; border-radius:var(--radius-sm);';
+      lightboxImgBox.innerHTML = '';
+      lightboxImgBox.appendChild(vid);
+      vid.play().catch(() => {}); // graceful fallback if autoplay blocked
     } else {
       lightboxImgBox.innerHTML = `
         <img src="${item.image}" alt="${item.title}">

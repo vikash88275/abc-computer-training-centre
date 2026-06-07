@@ -270,6 +270,32 @@ button {
   letter-spacing: 0.1em;
   color: var(--neutral-gray);
   margin-top: -2px;
+  white-space: nowrap;
+}
+
+/* Logo text: trim the long name on mobile to avoid overflow */
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.1rem;
+    max-width: calc(100vw - 110px); /* leave room for hamburger button */
+    overflow: hidden;
+  }
+  .logo-text {
+    overflow: hidden;
+  }
+  .logo-text span {
+    display: none; /* hide 'DABRA - NO. 1 INSTITUTE' on tiny screens */
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .logo {
+    font-size: 1.2rem;
+  }
+  .logo-text span {
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+  }
 }
 
 /* Desktop Menu */
@@ -423,7 +449,7 @@ button {
               var(--neutral-lighter);
   background-size: 100% 100%, 100% 100%, 24px 24px, 100% 100%;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* clipped on desktop to hide decorative blur glows */
 }
 
 .page-banner {
@@ -824,6 +850,7 @@ button {
   width: 100%;
   height: 480px;
   object-fit: cover;
+  object-position: center 15%; /* keep face visible, not cropped */
   transition: var(--transition-slow);
 }
 
@@ -2517,20 +2544,57 @@ button {
   }
   
   .section-padding { padding: 4rem 0; }
-  
+
+  /* Let hero grow freely on mobile — no clipping */
+  .hero {
+    overflow: visible;
+    height: auto;
+  }
+
   .hero-grid, .founder-wrap, .why-grid, .contact-grid, .blog-layout, .selection-grid, .testimonials-grid {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2rem;
   }
   .testimonials-grid .testimonial-card:last-child {
     grid-column: auto;
   }
 
-  .hero { padding: 8rem 0 4rem; }
-  .hero-title { font-size: 2.6rem; }
-  .hero-desc { font-size: 1.05rem; }
+  .hero {
+    padding: 6.5rem 0 3rem;
+    overflow: visible;
+    height: auto;
+    min-height: unset;
+  }
+  .hero-title { font-size: 2rem; line-height: 1.2; }
+  .hero-desc { font-size: 1rem; }
   .hero-buttons { flex-direction: column; }
   .hero-buttons .btn { width: 100%; }
+
+  /* Hero image — scale down and center properly on mobile */
+  .hero-image-wrap {
+    order: -1; /* show image above text on mobile */
+    margin: 0 auto;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .hero-img {
+    max-width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  /* Page banner padding on mobile */
+  .page-banner {
+    padding: 7rem 1rem 3rem;
+    overflow: visible;
+    height: auto;
+  }
+
+  .page-banner h1 {
+    font-size: 2rem;
+  }
 
   .mobile-toggle { display: flex; }
   
@@ -2590,7 +2654,18 @@ button {
   }
 
   .founder-img-box img {
-    height: 380px;
+    height: 300px;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  /* Fix founder/faculty layout on mobile — stack cleanly */
+  .founder-wrap {
+    gap: 2rem;
+  }
+
+  .founder-decor-border {
+    display: none; /* hide decorative offset border on mobile */
   }
 
   .form-group-grid, .form-group-grid.form-grid-3 {
@@ -2616,20 +2691,48 @@ button {
   .lightbox-next { right: 10px; }
 }
 @media (max-width: 480px) {
-  h1 { font-size: 2.4rem; }
-  .hero-title { font-size: 2.2rem; }
-  .section-title { font-size: 2rem; }
-  
+  h1 { font-size: 2rem; }
+  .hero-title { font-size: 1.9rem; line-height: 1.25; }
+  .section-title { font-size: 1.75rem; }
+
+  .hero {
+    padding: 6rem 0 2.5rem;
+  }
+
+  .hero-image-wrap {
+    max-width: 280px;
+  }
+
+  .hero-img {
+    height: 200px;
+  }
+
+  .hero-desc {
+    font-size: 0.95rem;
+  }
+
   .course-grid, .highlights-grid, .testimonials-grid, .gallery-grid, .grid-2, .grid-3, .grid-4 {
     grid-template-columns: 1fr;
   }
-  
+
   .founder-stats {
     flex-direction: column;
   }
-  
+
+  .founder-img-box img {
+    height: 250px;
+  }
+
   .footer-grid {
     grid-template-columns: 1fr;
+  }
+
+  .page-banner {
+    padding: 6rem 1rem 2.5rem;
+  }
+
+  .page-banner h1 {
+    font-size: 1.7rem;
   }
 
   .hero-floating-card {
@@ -2672,9 +2775,20 @@ button {
   box-sizing: border-box;
 }
 
-/* Blurry Background Layer disabled */
+/* Blurry Background Layer — full-bleed backdrop that fills the slide */
 .hero-slide-blur-bg {
-  display: none;
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: blur(18px) brightness(0.45) saturate(1.2);
+  transform: scale(1.08); /* prevent blur edge gaps */
+  z-index: 1;
+  border-radius: 0;
+  pointer-events: none;
 }
 
 /* Foreground image centered, fitting the box without any crop/cut */
@@ -2778,21 +2892,35 @@ button {
 
 @media (max-width: 768px) {
   .hero-slider-container {
-    height: 70vh;
+    height: 55vw; /* proportional on mobile — approx 55% of screen width */
+    min-height: 220px;
+    max-height: 420px;
     margin-top: 2rem;
   }
   .hero-slide {
     flex: 0 0 100%;
     width: 100%;
-    padding: 0.5rem;
+    padding: 0; /* no padding so blur fills edge to edge */
+  }
+  .hero-slide-img {
+    border-radius: var(--radius-sm);
   }
   .slider-control {
-    width: 40px;
-    height: 40px;
-    font-size: 1.8rem;
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
   }
-  .slider-control.prev { left: 10px; }
-  .slider-control.next { right: 10px; }
+  .slider-control.prev { left: 8px; }
+  .slider-control.next { right: 8px; }
+}
+
+@media (max-width: 480px) {
+  .hero-slider-container {
+    height: 60vw;
+    min-height: 200px;
+    max-height: 320px;
+    margin-top: 1.5rem;
+  }
 }
 
 /* ========================================================================
