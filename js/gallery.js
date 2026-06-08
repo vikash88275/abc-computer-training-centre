@@ -334,27 +334,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxTitle = lightbox.querySelector('.lightbox-title');
 
     if (item.type === 'video') {
-      const vid = document.createElement('video');
-      vid.src = item.video;
-      vid.controls = true;
-      vid.autoplay = true;
-      vid.setAttribute('playsinline', '');   // required for iOS inline play
-      vid.setAttribute('webkit-playsinline', ''); // older iOS Safari
-      vid.style.cssText = 'width: 100%; max-height: 75vh; display: block; background: #000; outline: none; border-radius: var(--radius-sm);';
+      lightboxImgBox.innerHTML = `
+        <video controls autoplay playsinline webkit-playsinline style="width: 100%; max-height: 75vh; display: block; background: #000; outline: none; border-radius: var(--radius-sm);">
+          <source src="${item.video}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      `;
       
-      lightboxImgBox.innerHTML = '';
-      lightboxImgBox.appendChild(vid);
-
-      // Play with unmuted first, fallback to muted if blocked by browser policy
-      setTimeout(() => {
-        vid.play().catch((err) => {
-          console.warn("Unmuted autoplay blocked by browser policy. Retrying muted...", err);
-          vid.muted = true;
-          vid.play().catch((err2) => {
-            console.error("Muted play also failed:", err2);
-          });
-        });
-      }, 50);
+      const vid = lightboxImgBox.querySelector('video');
+      if (vid) {
+        // Safe play sequence with fallback
+        setTimeout(() => {
+          try {
+            const playPromise = vid.play();
+            if (playPromise !== undefined && typeof playPromise.then === 'function') {
+              playPromise.catch((err) => {
+                console.warn("Unmuted autoplay blocked. Retrying muted...", err);
+                vid.muted = true;
+                const retryPromise = vid.play();
+                if (retryPromise !== undefined && typeof retryPromise.then === 'function') {
+                  retryPromise.catch((err2) => {
+                    console.error("Muted autoplay also blocked:", err2);
+                  });
+                }
+              });
+            }
+          } catch (e) {
+            console.error("Autoplay script error caught:", e);
+          }
+        }, 100);
+      }
     } else {
       lightboxImgBox.innerHTML = `
         <img src="${item.image}" alt="${item.title}">
