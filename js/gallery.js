@@ -40,12 +40,13 @@ const GALLERY_DATA = [
     desc: "Practical learning sessions in progress, where concepts are immediately implemented on real-time projects with personalized mentorship."
   },
   
-  // --- Row 2: 4 Premium Videos (thumbnails rendered dynamically from video frames) ---
+  // --- Row 2: 4 Premium Videos (thumbnails rendered statically from image posters) ---
   {
     id: 5,
     title: "Mentorship & Lab Practice Video",
     category: "students",
     type: "video",
+    image: "assets/images/computer_lab_classroom.png",
     video: "assets/videos/student_mentorship.mp4",
     desc: "Watch Director Vikash Sahu mentoring students as they develop coding skills and logical workflows in the lab."
   },
@@ -54,6 +55,7 @@ const GALLERY_DATA = [
     title: "Institute Facility & Lab Tour",
     category: "lab",
     type: "video",
+    image: "assets/images/media__1780286584147.jpg",
     video: "assets/videos/practical_lab_tour.mp4",
     desc: "A virtual walkthrough showcasing our high-tech computer systems, spacious coaching layouts, and advanced cooling benches."
   },
@@ -62,6 +64,7 @@ const GALLERY_DATA = [
     title: "CPCT High-Speed Typing Class",
     category: "students",
     type: "video",
+    image: "assets/images/media__1780286584141.jpg",
     video: "assets/videos/typing_class_session.mp4",
     desc: "Students practicing intensive typing tutorials (Hindi & English) for state-level CPCT certifications and government jobs."
   },
@@ -70,6 +73,7 @@ const GALLERY_DATA = [
     title: "Batch Felicitation & Awards",
     category: "events",
     type: "video",
+    image: "assets/images/event_image_1.jpg",
     video: "assets/videos/certification_ceremony.mp4",
     desc: "Highlighting the award ceremony honoring top performing accounting students and certification distributions."
   },
@@ -78,6 +82,7 @@ const GALLERY_DATA = [
     title: "Institute Location Route Video",
     category: "events",
     type: "video",
+    image: "assets/images/basics_image_1.jpg",
     video: "assets/videos/map_video.mp4",
     desc: "A video guide showing the route and entrance details of ABC Computer Training Centre in Kamleshwar Colony."
   },
@@ -86,6 +91,7 @@ const GALLERY_DATA = [
     title: "Lab Location Guidance Tour",
     category: "lab",
     type: "video",
+    image: "assets/images/basics_image_2.jpg",
     video: "assets/videos/a.mp4",
     desc: "Watch a video tour showing the lab facilities and landmark guidance near the institute."
   },
@@ -94,6 +100,7 @@ const GALLERY_DATA = [
     title: "Students Lab Check-in",
     category: "students",
     type: "video",
+    image: "assets/images/basics_image_3.jpg",
     video: "assets/videos/video_2026-06-05_17-30-51.mp4",
     desc: "Real-time walkthrough of students arriving and checking into their designated computer systems for practical classes."
   },
@@ -102,6 +109,7 @@ const GALLERY_DATA = [
     title: "Student Entrance Guidance",
     category: "students",
     type: "video",
+    image: "assets/images/basics_image_4.jpg",
     video: "assets/videos/video_2026-06-05_17-31-02.mp4",
     desc: "Entrance walk showing students standard check-in points and facilities."
   },
@@ -110,6 +118,7 @@ const GALLERY_DATA = [
     title: "Lab Equipment & Infrastructure",
     category: "lab",
     type: "video",
+    image: "assets/images/basics_image_5.jpg",
     video: "assets/videos/video_2026-06-05_17-31-31.mp4",
     desc: "Walkthrough displaying our laboratory equipment, seating capacity, and individual workstations."
   },
@@ -260,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="gallery-item reveal active" data-index="${idx}">
         <div class="gallery-img-box">
           ${item.type === 'video' ? `
-            <video src="${item.video}#t=0.5" muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; transition: var(--transition-slow); display: block;"></video>
+            <img src="${item.image}" alt="${item.title}" loading="lazy">
             <div class="video-play-indicator">
               <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; fill: white;"><path d="M8 5v14l11-7z"/></svg>
             </div>
@@ -331,10 +340,21 @@ document.addEventListener('DOMContentLoaded', () => {
       vid.autoplay = true;
       vid.setAttribute('playsinline', '');   // required for iOS inline play
       vid.setAttribute('webkit-playsinline', ''); // older iOS Safari
-      vid.style.cssText = 'width:100%; max-height:75vh; display:block; background:#000; outline:none; border-radius:var(--radius-sm);';
+      vid.style.cssText = 'width: 100%; max-height: 75vh; display: block; background: #000; outline: none; border-radius: var(--radius-sm);';
+      
       lightboxImgBox.innerHTML = '';
       lightboxImgBox.appendChild(vid);
-      vid.play().catch(() => {}); // graceful fallback if autoplay blocked
+
+      // Play with unmuted first, fallback to muted if blocked by browser policy
+      setTimeout(() => {
+        vid.play().catch((err) => {
+          console.warn("Unmuted autoplay blocked by browser policy. Retrying muted...", err);
+          vid.muted = true;
+          vid.play().catch((err2) => {
+            console.error("Muted play also failed:", err2);
+          });
+        });
+      }, 50);
     } else {
       lightboxImgBox.innerHTML = `
         <img src="${item.image}" alt="${item.title}">
