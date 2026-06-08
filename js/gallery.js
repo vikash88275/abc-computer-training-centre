@@ -261,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Render Gallery Items ---
   function renderGallery(items) {
     if (!galleryGrid) return;
     
@@ -269,7 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="gallery-item reveal active" data-index="${idx}">
         <div class="gallery-img-box">
           ${item.type === 'video' ? `
-            <img src="${item.image}" alt="${item.title}" loading="lazy">
+            <img src="${item.image}" alt="${item.title}" class="gallery-poster-fallback" loading="lazy">
+            <video src="${item.video}#t=0.5" muted playsinline preload="metadata" class="gallery-video-preview" style="display: none; width: 100%; height: 100%; object-fit: cover; transition: var(--transition-slow);"></video>
             <div class="video-play-indicator">
               <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; fill: white;"><path d="M8 5v14l11-7z"/></svg>
             </div>
@@ -283,6 +283,20 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
+
+    // Attach load listener for video previews (shows real video frame on desktop, keeps image poster on mobile)
+    const previews = galleryGrid.querySelectorAll('.gallery-video-preview');
+    previews.forEach(vid => {
+      if (vid.readyState >= 2) {
+        vid.style.display = 'block';
+        if (vid.previousElementSibling) vid.previousElementSibling.style.display = 'none';
+      } else {
+        vid.addEventListener('loadeddata', () => {
+          vid.style.display = 'block';
+          if (vid.previousElementSibling) vid.previousElementSibling.style.display = 'none';
+        });
+      }
+    });
 
     // Attach lightbox triggers
     const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
