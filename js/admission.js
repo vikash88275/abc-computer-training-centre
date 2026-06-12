@@ -27,10 +27,67 @@ if (window.supabase) {
 }
 
 // Global Supabase Integration Helpers
+function mapLeadToSupabase(lead) {
+  if (!lead) return null;
+  return {
+    sno: lead.sno,
+    date: lead.date,
+    name: lead.name,
+    father: lead.father,
+    mother: lead.mother,
+    dob: lead.dob,
+    qualification: lead.qualification,
+    address: lead.address,
+    aadhar: lead.aadhar,
+    paymentstatus: lead.paymentStatus,
+    mobile: lead.mobile,
+    email: lead.email,
+    courseid: lead.courseId,
+    coursename: lead.courseName,
+    coursecategory: lead.courseCategory,
+    totalfee: lead.totalFee,
+    paidfee: lead.paidFee,
+    duefee: lead.dueFee,
+    photo: lead.photo,
+    signaturetext: lead.signatureText,
+    signatureimg: lead.signatureImg,
+    timestamp: lead.timestamp
+  };
+}
+
+function mapLeadFromSupabase(row) {
+  if (!row) return null;
+  return {
+    sno: row.sno,
+    date: row.date,
+    name: row.name,
+    father: row.father,
+    mother: row.mother,
+    dob: row.dob,
+    qualification: row.qualification,
+    address: row.address,
+    aadhar: row.aadhar,
+    paymentStatus: row.paymentstatus,
+    mobile: row.mobile,
+    email: row.email,
+    courseId: row.courseid,
+    courseName: row.coursename,
+    courseCategory: row.coursecategory,
+    totalFee: row.totalfee,
+    paidFee: row.paidfee,
+    dueFee: row.duefee,
+    photo: row.photo,
+    signatureText: row.signaturetext,
+    signatureImg: row.signatureimg,
+    timestamp: row.timestamp
+  };
+}
+
 async function saveToSupabase(lead) {
   if (!supabase) return;
   try {
-    const { error } = await supabase.from('admissions').upsert(lead, { onConflict: 'sno' });
+    const mapped = mapLeadToSupabase(lead);
+    const { error } = await supabase.from('admissions').upsert(mapped, { onConflict: 'sno' });
     if (error) throw error;
     console.log("Upserted lead to Supabase:", lead.sno);
   } catch (err) {
@@ -98,7 +155,9 @@ async function syncFromSupabase(renderCallback) {
 
       // Merge remote data into local storage (remote newer dates win)
       const merged = [...localLeads];
-      data.forEach(remoteLead => {
+      const mappedData = data.map(mapLeadFromSupabase);
+      mappedData.forEach(remoteLead => {
+        if (!remoteLead) return;
         const idx = merged.findIndex(l => l && l.sno === remoteLead.sno);
         if (idx !== -1) {
           const remoteTime = remoteLead.timestamp ? new Date(remoteLead.timestamp).getTime() : 0;
@@ -626,7 +685,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (error) throw error;
           
           if (data && data.length > 0) {
-            match = data.find(lead => {
+            const mappedData = data.map(mapLeadFromSupabase);
+            match = mappedData.find(lead => {
               if (!lead || !lead.dob) return false;
               const leadDobNormalized = normalizeDateInput(lead.dob);
               return leadDobNormalized === formattedSearchPassword;
@@ -795,10 +855,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       hasDrawn = false;
       if (supabase && lead.sno) {
-        supabase.from('admissions').select('signatureImg').eq('sno', lead.sno).single()
+        supabase.from('admissions').select('signatureimg').eq('sno', lead.sno).single()
           .then(({ data, error }) => {
-            if (!error && data && data.signatureImg) {
-              lead.signatureImg = data.signatureImg;
+            if (!error && data && data.signatureimg) {
+              lead.signatureImg = data.signatureimg;
               if (sigCanvas) {
                 const ctx = sigCanvas.getContext('2d');
                 const img = new Image();
@@ -807,7 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   ctx.drawImage(img, 0, 0);
                   hasDrawn = true;
                 };
-                img.src = data.signatureImg;
+                img.src = data.signatureimg;
               }
             }
           });
@@ -965,12 +1025,12 @@ document.addEventListener('DOMContentLoaded', () => {
         sigTextDisplay.style.display = 'block';
       }
       if (supabase && lead.sno && (!lead.signatureImg || lead.signatureImg === "")) {
-        supabase.from('admissions').select('signatureImg').eq('sno', lead.sno).single()
+        supabase.from('admissions').select('signatureimg').eq('sno', lead.sno).single()
           .then(({ data, error }) => {
-            if (!error && data && data.signatureImg) {
-              lead.signatureImg = data.signatureImg;
+            if (!error && data && data.signatureimg) {
+              lead.signatureImg = data.signatureimg;
               if (sigImgDisplay) {
-                sigImgDisplay.src = data.signatureImg;
+                sigImgDisplay.src = data.signatureimg;
                 sigImgDisplay.style.display = 'block';
               }
               if (sigTextDisplay) sigTextDisplay.style.display = 'none';
@@ -1319,12 +1379,12 @@ document.addEventListener('DOMContentLoaded', () => {
         sigTextDisplay.style.display = 'block';
       }
       if (supabase && lead.sno && (!lead.signatureImg || lead.signatureImg === "")) {
-        supabase.from('admissions').select('signatureImg').eq('sno', lead.sno).single()
+        supabase.from('admissions').select('signatureimg').eq('sno', lead.sno).single()
           .then(({ data, error }) => {
-            if (!error && data && data.signatureImg) {
-              lead.signatureImg = data.signatureImg;
+            if (!error && data && data.signatureimg) {
+              lead.signatureImg = data.signatureimg;
               if (sigImgDisplay) {
-                sigImgDisplay.src = data.signatureImg;
+                sigImgDisplay.src = data.signatureimg;
                 sigImgDisplay.style.display = 'block';
               }
               if (sigTextDisplay) sigTextDisplay.style.display = 'none';

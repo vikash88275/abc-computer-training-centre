@@ -13,6 +13,62 @@ if (window.supabase) {
   supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 }
 
+function mapLeadToSupabase(lead) {
+  if (!lead) return null;
+  return {
+    sno: lead.sno,
+    date: lead.date,
+    name: lead.name,
+    father: lead.father,
+    mother: lead.mother,
+    dob: lead.dob,
+    qualification: lead.qualification,
+    address: lead.address,
+    aadhar: lead.aadhar,
+    paymentstatus: lead.paymentStatus,
+    mobile: lead.mobile,
+    email: lead.email,
+    courseid: lead.courseId,
+    coursename: lead.courseName,
+    coursecategory: lead.courseCategory,
+    totalfee: lead.totalFee,
+    paidfee: lead.paidFee,
+    duefee: lead.dueFee,
+    photo: lead.photo,
+    signaturetext: lead.signatureText,
+    signatureimg: lead.signatureImg,
+    timestamp: lead.timestamp
+  };
+}
+
+function mapLeadFromSupabase(row) {
+  if (!row) return null;
+  return {
+    sno: row.sno,
+    date: row.date,
+    name: row.name,
+    father: row.father,
+    mother: row.mother,
+    dob: row.dob,
+    qualification: row.qualification,
+    address: row.address,
+    aadhar: row.aadhar,
+    paymentStatus: row.paymentstatus,
+    mobile: row.mobile,
+    email: row.email,
+    courseId: row.courseid,
+    courseName: row.coursename,
+    courseCategory: row.coursecategory,
+    totalFee: row.totalfee,
+    paidFee: row.paidfee,
+    dueFee: row.duefee,
+    photo: row.photo,
+    signatureText: row.signaturetext,
+    signatureImg: row.signatureimg,
+    timestamp: row.timestamp
+  };
+}
+
 // Safe localStorage.setItem with QuotaExceededError handling and image-stripping fallback for abc_leads
 function safeLocalStorageSet(key, value) {
   try {
@@ -60,7 +116,9 @@ async function syncFromSupabase() {
       } catch (e) {}
 
       const merged = [...localLeads];
-      data.forEach(remoteLead => {
+      const mappedData = data.map(mapLeadFromSupabase);
+      mappedData.forEach(remoteLead => {
+        if (!remoteLead) return;
         const idx = merged.findIndex(l => l && l.sno === remoteLead.sno);
         if (idx !== -1) {
           const remoteTime = remoteLead.timestamp ? new Date(remoteLead.timestamp).getTime() : 0;
@@ -118,7 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (error) throw error;
           
           if (data && data.length > 0) {
-            match = data.find(lead => {
+            const mappedData = data.map(mapLeadFromSupabase);
+            match = mappedData.find(lead => {
               if (!lead || !lead.dob) return false;
               const leadDobNormalized = normalizeDateInput(lead.dob);
               return leadDobNormalized === formattedSearchPassword;
@@ -332,12 +391,12 @@ document.addEventListener('DOMContentLoaded', () => {
         sigTextDisplay.style.display = 'block';
       }
       if (supabase && lead.sno && (!lead.signatureImg || lead.signatureImg === "")) {
-        supabase.from('admissions').select('signatureImg').eq('sno', lead.sno).single()
+        supabase.from('admissions').select('signatureimg').eq('sno', lead.sno).single()
           .then(({ data, error }) => {
-            if (!error && data && data.signatureImg) {
-              lead.signatureImg = data.signatureImg;
+            if (!error && data && data.signatureimg) {
+              lead.signatureImg = data.signatureimg;
               if (sigImgDisplay) {
-                sigImgDisplay.src = data.signatureImg;
+                sigImgDisplay.src = data.signatureimg;
                 sigImgDisplay.style.display = 'block';
               }
               if (sigTextDisplay) sigTextDisplay.style.display = 'none';
