@@ -9,8 +9,13 @@
 const supabaseUrl = 'https://zoonzlmmlheapqentzld.supabase.co';
 const supabaseKey = 'sb_publishable_aOXny0qKbF3Z2xrHBFkQSw_XXetTODe';
 let supabase = null;
-if (window.supabase) {
-  supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+function getSupabase() {
+  if (supabase) return supabase;
+  if (window.supabase) {
+    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  }
+  return supabase;
 }
 
 function mapLeadToSupabase(lead) {
@@ -70,10 +75,11 @@ function mapLeadFromSupabase(row) {
 }
 
 async function saveToSupabase(lead) {
-  if (!supabase) return;
+  const sb = getSupabase();
+  if (!sb) return;
   try {
     const mapped = mapLeadToSupabase(lead);
-    const { error } = await supabase.from('admissions').upsert(mapped, { onConflict: 'sno' });
+    const { error } = await sb.from('admissions').upsert(mapped, { onConflict: 'sno' });
     if (error) throw error;
     console.log("Upserted lead to Supabase:", lead.sno);
   } catch (err) {
@@ -117,9 +123,10 @@ function safeLocalStorageSet(key, value) {
 }
 
 async function syncFromSupabase() {
-  if (!supabase) return;
+  const sb = getSupabase();
+  if (!sb) return;
   try {
-    const { data, error } = await supabase.from('admissions').select('*');
+    const { data, error } = await sb.from('admissions').select('*');
     if (error) throw error;
     
     let localLeads = [];
@@ -204,10 +211,11 @@ document.addEventListener('DOMContentLoaded', () => {
       let match = null;
       let isRemote = false;
 
-      if (supabase) {
+      const sb = getSupabase();
+      if (sb) {
         showError("Searching online records...");
         try {
-          const { data, error } = await supabase
+          const { data, error } = await sb
             .from('admissions')
             .select('*')
             .ilike('name', studentName);
@@ -401,8 +409,9 @@ document.addEventListener('DOMContentLoaded', () => {
         photoBox.innerHTML = `<img src="${lead.photo}" alt="Student Photo" style="width:100%; height:100%; object-fit:cover;">`;
       } else {
         photoBox.innerHTML = '<span>PHOTO</span>';
-        if (supabase && lead.sno) {
-          supabase.from('admissions').select('photo').eq('sno', lead.sno).single()
+        const sb = getSupabase();
+        if (sb && lead.sno) {
+          sb.from('admissions').select('photo').eq('sno', lead.sno).single()
             .then(({ data, error }) => {
               if (!error && data && data.photo) {
                 lead.photo = data.photo;
@@ -429,8 +438,9 @@ document.addEventListener('DOMContentLoaded', () => {
         sigTextDisplay.textContent = lead.signatureText || "";
         sigTextDisplay.style.display = 'block';
       }
-      if (supabase && lead.sno && (!lead.signatureImg || lead.signatureImg === "")) {
-        supabase.from('admissions').select('signatureimg').eq('sno', lead.sno).single()
+      const sb = getSupabase();
+      if (sb && lead.sno && (!lead.signatureImg || lead.signatureImg === "")) {
+        sb.from('admissions').select('signatureimg').eq('sno', lead.sno).single()
           .then(({ data, error }) => {
             if (!error && data && data.signatureimg) {
               lead.signatureImg = data.signatureimg;
