@@ -13,6 +13,41 @@ if (window.supabase) {
   supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 }
 
+// Safe localStorage.setItem with QuotaExceededError handling and image-stripping fallback for abc_leads
+function safeLocalStorageSet(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    if (e && (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014)) {
+      if (key === 'abc_leads') {
+        console.warn("Local storage quota exceeded for abc_leads. Attempting to save records without photos/signatures.");
+        try {
+          const leads = JSON.parse(value);
+          if (Array.isArray(leads)) {
+            const strippedLeads = leads.map(lead => {
+              if (!lead) return lead;
+              return {
+                ...lead,
+                photo: '',
+                signatureImg: ''
+              };
+            });
+            localStorage.setItem(key, JSON.stringify(strippedLeads));
+            console.log("Successfully saved stripped records to local storage.");
+            return true;
+          }
+        } catch (err) {
+          console.error("Failed to parse/strip leads for fallback:", err);
+        }
+      }
+    } else {
+      console.error('localStorage.setItem failed:', e);
+    }
+    return false;
+  }
+}
+
 async function syncFromSupabase() {
   if (!supabase) return;
   try {
@@ -38,7 +73,7 @@ async function syncFromSupabase() {
         }
       });
 
-      localStorage.setItem('abc_leads', JSON.stringify(merged));
+      safeLocalStorageSet('abc_leads', JSON.stringify(merged));
       console.log("Supabase leads synced to local storage successfully for slip retrieval.");
     }
   } catch (err) {
@@ -57,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnPrint = document.getElementById('btn-print-slip');
 
   if (retrieveForm) {
-    retrieveForm.addEventListener('submit', (e) => {
+    retrieveForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const studentName = document.getElementById('slip-name').value.trim();
@@ -68,28 +103,74 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Fetch leads from localStorage
-      let currentLeads = [];
-      try {
-        currentLeads = JSON.parse(localStorage.getItem('abc_leads'));
-        if (!Array.isArray(currentLeads)) {
-          currentLeads = [];
+      const formattedSearchPassword = normalizeDateInput(birthPassword);
+      let match = null;
+      let isRemote = false;
+
+      if (supabase) {
+        showError("Searching online records...");
+        try {
+          const { data, error } = await supabase
+            .from('admissions')
+            .select('*')
+            .ilike('name', studentName);
+          
+          if (error) throw error;
+          
+          if (data && data.length > 0) {
+            match = data.find(lead => {
+              if (!lead || !lead.dob) return false;
+              const leadDobNormalized = normalizeDateInput(lead.dob);
+              return leadDobNormalized === formattedSearchPassword;
+            });
+            if (match) {
+              isRemote = true;
+            }
+          }
+        } catch (err) {
+          console.error("Error searching Supabase for fee slip:", err);
         }
-      } catch (err) {
-        currentLeads = [];
       }
 
-      const formattedSearchPassword = normalizeDateInput(birthPassword);
-      const match = currentLeads.find(lead => {
-        if (!lead || !lead.name || !lead.dob) return false;
-        const leadName = lead.name.toLowerCase().trim();
-        const searchNameLower = studentName.toLowerCase().trim();
-        const leadDobNormalized = normalizeDateInput(lead.dob);
-        return leadName === searchNameLower && leadDobNormalized === formattedSearchPassword;
-      });
+      if (!match) {
+        // Fetch leads from localStorage as fallback
+        let currentLeads = [];
+        try {
+          currentLeads = JSON.parse(localStorage.getItem('abc_leads'));
+          if (!Array.isArray(currentLeads)) {
+            currentLeads = [];
+          }
+        } catch (err) {
+          currentLeads = [];
+        }
+        match = currentLeads.find(lead => {
+          if (!lead || !lead.name || !lead.dob) return false;
+          const leadName = lead.name.toLowerCase().trim();
+          const searchNameLower = studentName.toLowerCase().trim();
+          const leadDobNormalized = normalizeDateInput(lead.dob);
+          return leadName === searchNameLower && leadDobNormalized === formattedSearchPassword;
+        });
+      }
 
       if (match) {
         if (errorMsg) errorMsg.style.display = 'none';
+
+        // Cache/update in local storage if we got it from remote
+        if (isRemote) {
+          try {
+            let currentLeads = JSON.parse(localStorage.getItem('abc_leads')) || [];
+            const idx = currentLeads.findIndex(l => l && l.sno === match.sno);
+            if (idx !== -1) {
+              currentLeads[idx] = match;
+            } else {
+              currentLeads.push(match);
+            }
+            safeLocalStorageSet('abc_leads', JSON.stringify(currentLeads));
+          } catch (e) {
+            console.error("Failed to update fee slip match in local storage:", e);
+          }
+        }
+
         populateFeeSlip(match);
         if (searchView) searchView.style.display = 'none';
         if (cardView) cardView.style.display = 'block';
@@ -222,6 +303,15 @@ document.addEventListener('DOMContentLoaded', () => {
         photoBox.innerHTML = `<img src="${lead.photo}" alt="Student Photo" style="width:100%; height:100%; object-fit:cover;">`;
       } else {
         photoBox.innerHTML = '<span>PHOTO</span>';
+        if (supabase && lead.sno) {
+          supabase.from('admissions').select('photo').eq('sno', lead.sno).single()
+            .then(({ data, error }) => {
+              if (!error && data && data.photo) {
+                lead.photo = data.photo;
+                photoBox.innerHTML = `<img src="${data.photo}" alt="Student Photo" style="width:100%; height:100%; object-fit:cover;">`;
+              }
+            });
+        }
       }
     }
 
@@ -240,6 +330,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sigTextDisplay) {
         sigTextDisplay.textContent = lead.signatureText || "";
         sigTextDisplay.style.display = 'block';
+      }
+      if (supabase && lead.sno && (!lead.signatureImg || lead.signatureImg === "")) {
+        supabase.from('admissions').select('signatureImg').eq('sno', lead.sno).single()
+          .then(({ data, error }) => {
+            if (!error && data && data.signatureImg) {
+              lead.signatureImg = data.signatureImg;
+              if (sigImgDisplay) {
+                sigImgDisplay.src = data.signatureImg;
+                sigImgDisplay.style.display = 'block';
+              }
+              if (sigTextDisplay) sigTextDisplay.style.display = 'none';
+            }
+          });
       }
     }
   }

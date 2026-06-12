@@ -49,6 +49,42 @@ async function deleteFromSupabase(sno) {
   }
 }
 
+// Safe localStorage.setItem with QuotaExceededError handling and image-stripping fallback for abc_leads
+function safeLocalStorageSet(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    if (e && (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014)) {
+      if (key === 'abc_leads') {
+        console.warn("Local storage quota exceeded for abc_leads. Attempting to save records without photos/signatures.");
+        try {
+          const leads = JSON.parse(value);
+          if (Array.isArray(leads)) {
+            const strippedLeads = leads.map(lead => {
+              if (!lead) return lead;
+              return {
+                ...lead,
+                photo: '',
+                signatureImg: ''
+              };
+            });
+            localStorage.setItem(key, JSON.stringify(strippedLeads));
+            console.log("Successfully saved stripped records to local storage.");
+            return true;
+          }
+        } catch (err) {
+          console.error("Failed to parse/strip leads for fallback:", err);
+        }
+      }
+      alert('Storage is full! Please clear some old browser data or reduce photo size, then try again.');
+    } else {
+      console.error('localStorage.setItem failed:', e);
+    }
+    return false;
+  }
+}
+
 async function syncFromSupabase(renderCallback) {
   if (!supabase) return;
   try {
@@ -75,7 +111,7 @@ async function syncFromSupabase(renderCallback) {
         }
       });
 
-      localStorage.setItem('abc_leads', JSON.stringify(merged));
+      safeLocalStorageSet('abc_leads', JSON.stringify(merged));
       if (typeof renderCallback === 'function') {
         renderCallback();
       }
@@ -178,20 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el) el.textContent = val !== undefined && val !== null ? String(val) : '';
   }
 
-  // Safe localStorage.setItem with QuotaExceededError handling
-  function safeLocalStorageSet(key, value) {
-    try {
-      localStorage.setItem(key, value);
-      return true;
-    } catch (e) {
-      if (e && (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014)) {
-        alert('Storage is full! Please clear some old browser data or reduce photo size, then try again.');
-      } else {
-        console.error('localStorage.setItem failed:', e);
-      }
-      return false;
-    }
-  }
+  // safeLocalStorageSet pulled to global scope
 
   // --- Panels Navigation ---
   if (btnSelectNew) {
@@ -577,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Validation and Check Form (Retrieval) ---
   if (checkForm) {
-    checkForm.addEventListener('submit', (e) => {
+    checkForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const searchName = document.getElementById('check-name').value.trim();
@@ -588,30 +611,77 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Fetch leads with safety checks
-      let currentLeads = [];
-      try {
-        currentLeads = JSON.parse(localStorage.getItem('abc_leads'));
-        if (!Array.isArray(currentLeads)) {
+      const formattedSearchPassword = normalizeDateInput(searchPassword);
+      let match = null;
+      let isRemote = false;
+
+      if (supabase) {
+        showCheckError("Searching online records...");
+        try {
+          const { data, error } = await supabase
+            .from('admissions')
+            .select('*')
+            .ilike('name', searchName);
+          
+          if (error) throw error;
+          
+          if (data && data.length > 0) {
+            match = data.find(lead => {
+              if (!lead || !lead.dob) return false;
+              const leadDobNormalized = normalizeDateInput(lead.dob);
+              return leadDobNormalized === formattedSearchPassword;
+            });
+            if (match) {
+              isRemote = true;
+            }
+          }
+        } catch (err) {
+          console.error("Error searching Supabase for check form:", err);
+        }
+      }
+
+      if (!match) {
+        // Fetch leads from local storage as fallback
+        let currentLeads = [];
+        try {
+          currentLeads = JSON.parse(localStorage.getItem('abc_leads'));
+          if (!Array.isArray(currentLeads)) {
+            currentLeads = [];
+          }
+        } catch (e) {
           currentLeads = [];
         }
-      } catch (e) {
-        currentLeads = [];
+        match = currentLeads.find(lead => {
+          if (!lead || !lead.name || !lead.dob) return false;
+          const leadName = lead.name.toLowerCase().trim();
+          const searchNameLower = searchName.toLowerCase().trim();
+          const leadDobNormalized = normalizeDateInput(lead.dob);
+          return leadName === searchNameLower && leadDobNormalized === formattedSearchPassword;
+        });
       }
-      const formattedSearchPassword = normalizeDateInput(searchPassword);
-      const match = currentLeads.find(lead => {
-        if (!lead || !lead.name || !lead.dob) return false;
-        const leadName = lead.name.toLowerCase().trim();
-        const searchNameLower = searchName.toLowerCase().trim();
-        const leadDobNormalized = normalizeDateInput(lead.dob);
-        return leadName === searchNameLower && leadDobNormalized === formattedSearchPassword;
-      });
 
       if (match) {
         // Load matched form receipt
         receiptBackReferrer = panelSelection;
-        try { populateReceipt(match); } catch(err) { console.error('populateReceipt error:', err); }
         if (checkErrorMsg) checkErrorMsg.style.display = 'none';
+
+        // Cache/update in local storage if we got it from remote
+        if (isRemote) {
+          try {
+            let currentLeads = JSON.parse(localStorage.getItem('abc_leads')) || [];
+            const idx = currentLeads.findIndex(l => l && l.sno === match.sno);
+            if (idx !== -1) {
+              currentLeads[idx] = match;
+            } else {
+              currentLeads.push(match);
+            }
+            safeLocalStorageSet('abc_leads', JSON.stringify(currentLeads));
+          } catch (e) {
+            console.error("Failed to update check form match in local storage:", e);
+          }
+        }
+
+        try { populateReceipt(match); } catch(err) { console.error('populateReceipt error:', err); }
         switchPanel(panelReceipt);
       } else {
         showCheckError("No records found with this name and password. Please check details or create a new form.");
@@ -669,6 +739,16 @@ document.addEventListener('DOMContentLoaded', () => {
         photoPreviewBox.innerHTML = `<img src="${lead.photo}" alt="Preview" style="width:100%; height:100%; object-fit:cover;">`;
       } else {
         photoPreviewBox.innerHTML = '<span>PHOTO PREVIEW</span>';
+        if (supabase && lead.sno) {
+          supabase.from('admissions').select('photo').eq('sno', lead.sno).single()
+            .then(({ data, error }) => {
+              if (!error && data && data.photo) {
+                lead.photo = data.photo;
+                studentPhotoBase64 = data.photo;
+                photoPreviewBox.innerHTML = `<img src="${data.photo}" alt="Preview" style="width:100%; height:100%; object-fit:cover;">`;
+              }
+            });
+        }
       }
     }
 
@@ -714,6 +794,24 @@ document.addEventListener('DOMContentLoaded', () => {
       img.src = lead.signatureImg;
     } else {
       hasDrawn = false;
+      if (supabase && lead.sno) {
+        supabase.from('admissions').select('signatureImg').eq('sno', lead.sno).single()
+          .then(({ data, error }) => {
+            if (!error && data && data.signatureImg) {
+              lead.signatureImg = data.signatureImg;
+              if (sigCanvas) {
+                const ctx = sigCanvas.getContext('2d');
+                const img = new Image();
+                img.onload = function() {
+                  ctx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                  ctx.drawImage(img, 0, 0);
+                  hasDrawn = true;
+                };
+                img.src = data.signatureImg;
+              }
+            }
+          });
+      }
     }
 
     courseRadios.forEach(radio => {
@@ -810,6 +908,15 @@ document.addEventListener('DOMContentLoaded', () => {
         photoTarget.innerHTML = `<img src="${lead.photo}" alt="Student Photo">`;
       } else {
         photoTarget.innerHTML = '<span>PHOTO</span>';
+        if (supabase && lead.sno) {
+          supabase.from('admissions').select('photo').eq('sno', lead.sno).single()
+            .then(({ data, error }) => {
+              if (!error && data && data.photo) {
+                lead.photo = data.photo;
+                photoTarget.innerHTML = `<img src="${data.photo}" alt="Student Photo">`;
+              }
+            });
+        }
       }
     }
 
@@ -856,6 +963,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sigTextDisplay) {
         sigTextDisplay.textContent = lead.signatureText;
         sigTextDisplay.style.display = 'block';
+      }
+      if (supabase && lead.sno && (!lead.signatureImg || lead.signatureImg === "")) {
+        supabase.from('admissions').select('signatureImg').eq('sno', lead.sno).single()
+          .then(({ data, error }) => {
+            if (!error && data && data.signatureImg) {
+              lead.signatureImg = data.signatureImg;
+              if (sigImgDisplay) {
+                sigImgDisplay.src = data.signatureImg;
+                sigImgDisplay.style.display = 'block';
+              }
+              if (sigTextDisplay) sigTextDisplay.style.display = 'none';
+            }
+          });
       }
     }
 
@@ -1171,6 +1291,15 @@ document.addEventListener('DOMContentLoaded', () => {
         photoBox.innerHTML = `<img src="${lead.photo}" alt="Student Photo" style="width:100%; height:100%; object-fit:cover;">`;
       } else {
         photoBox.innerHTML = '<span>PHOTO</span>';
+        if (supabase && lead.sno) {
+          supabase.from('admissions').select('photo').eq('sno', lead.sno).single()
+            .then(({ data, error }) => {
+              if (!error && data && data.photo) {
+                lead.photo = data.photo;
+                photoBox.innerHTML = `<img src="${data.photo}" alt="Student Photo" style="width:100%; height:100%; object-fit:cover;">`;
+              }
+            });
+        }
       }
     }
 
@@ -1188,6 +1317,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sigTextDisplay) {
         sigTextDisplay.textContent = lead.signatureText || "";
         sigTextDisplay.style.display = 'block';
+      }
+      if (supabase && lead.sno && (!lead.signatureImg || lead.signatureImg === "")) {
+        supabase.from('admissions').select('signatureImg').eq('sno', lead.sno).single()
+          .then(({ data, error }) => {
+            if (!error && data && data.signatureImg) {
+              lead.signatureImg = data.signatureImg;
+              if (sigImgDisplay) {
+                sigImgDisplay.src = data.signatureImg;
+                sigImgDisplay.style.display = 'block';
+              }
+              if (sigTextDisplay) sigTextDisplay.style.display = 'none';
+            }
+          });
       }
     }
 
