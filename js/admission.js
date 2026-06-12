@@ -18,6 +18,74 @@ const FEES_INDEX = {
   "basic_6m": { name: "Basic Computer & Internet (6 Months)", fee: 2500, duration: "6 Months", category: "6m" }
 };
 
+// --- Supabase Config & Initialization ---
+const supabaseUrl = 'https://zoonzlmmlheapqentzld.supabase.co';
+const supabaseKey = 'sb_publishable_aOXny0qKbF3Z2xrHBFkQSw_XXetTODe';
+let supabase = null;
+if (window.supabase) {
+  supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+}
+
+// Global Supabase Integration Helpers
+async function saveToSupabase(lead) {
+  if (!supabase) return;
+  try {
+    const { error } = await supabase.from('admissions').upsert(lead, { onConflict: 'sno' });
+    if (error) throw error;
+    console.log("Upserted lead to Supabase:", lead.sno);
+  } catch (err) {
+    console.error("Error upserting lead to Supabase:", err);
+  }
+}
+
+async function deleteFromSupabase(sno) {
+  if (!supabase) return;
+  try {
+    const { error } = await supabase.from('admissions').delete().eq('sno', sno);
+    if (error) throw error;
+    console.log("Deleted lead from Supabase:", sno);
+  } catch (err) {
+    console.error("Error deleting lead from Supabase:", err);
+  }
+}
+
+async function syncFromSupabase(renderCallback) {
+  if (!supabase) return;
+  try {
+    const { data, error } = await supabase.from('admissions').select('*');
+    if (error) throw error;
+    if (data && Array.isArray(data)) {
+      let localLeads = [];
+      try {
+        localLeads = JSON.parse(localStorage.getItem('abc_leads')) || [];
+      } catch (e) {}
+
+      // Merge remote data into local storage (remote newer dates win)
+      const merged = [...localLeads];
+      data.forEach(remoteLead => {
+        const idx = merged.findIndex(l => l && l.sno === remoteLead.sno);
+        if (idx !== -1) {
+          const remoteTime = remoteLead.timestamp ? new Date(remoteLead.timestamp).getTime() : 0;
+          const localTime = merged[idx].timestamp ? new Date(merged[idx].timestamp).getTime() : 0;
+          if (remoteTime >= localTime) {
+            merged[idx] = remoteLead;
+          }
+        } else {
+          merged.push(remoteLead);
+        }
+      });
+
+      localStorage.setItem('abc_leads', JSON.stringify(merged));
+      if (typeof renderCallback === 'function') {
+        renderCallback();
+      }
+      console.log("Supabase leads synced to local storage successfully.");
+    }
+  } catch (err) {
+    console.error("Error syncing leads from Supabase:", err);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Views panels
   const panelSelection = document.getElementById('portal-selection-view');
@@ -496,6 +564,9 @@ document.addEventListener('DOMContentLoaded', () => {
       editingStudentSno = null;
       const formSno = document.getElementById('form-sno');
       if (formSno) formSno.readOnly = true;
+
+      // Save to Supabase backend database
+      saveToSupabase(newLead);
 
       // Display receipt — always navigate even if storage had issues
       receiptBackReferrer = panelSelection;
@@ -1007,6 +1078,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Delete from localStorage array
             const updatedLeads = currentLeads.filter(l => l && l.sno !== sno);
             safeLocalStorageSet('abc_leads', JSON.stringify(updatedLeads));
+            
+            // Delete from Supabase
+            deleteFromSupabase(sno);
+            
             renderRecords(); // re-render
           }
         }
@@ -1207,6 +1282,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         targetLead = leads[leadIdx];
         safeLocalStorageSet('abc_leads', JSON.stringify(leads));
+        
+        // Sync updated fee slip record to Supabase
+        saveToSupabase(targetLead);
       }
 
       if (!targetLead) {
@@ -1322,6 +1400,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (index !== -1) {
       currentLeads[index] = updatedLead;
       safeLocalStorageSet('abc_leads', JSON.stringify(currentLeads));
+      
+      // Sync update to Supabase
+      saveToSupabase(updatedLead);
     }
   }
 
@@ -2034,6 +2115,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     switchPanel(panelNotes);
   }
+
+  // Trigger Supabase database sync on page load
+  syncFromSupabase(renderRecords);
 });
 
 

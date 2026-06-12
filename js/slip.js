@@ -5,7 +5,50 @@
 ========================================================================
 */
 
+// --- Supabase Config & Initialization ---
+const supabaseUrl = 'https://zoonzlmmlheapqentzld.supabase.co';
+const supabaseKey = 'sb_publishable_aOXny0qKbF3Z2xrHBFkQSw_XXetTODe';
+let supabase = null;
+if (window.supabase) {
+  supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+}
+
+async function syncFromSupabase() {
+  if (!supabase) return;
+  try {
+    const { data, error } = await supabase.from('admissions').select('*');
+    if (error) throw error;
+    if (data && Array.isArray(data)) {
+      let localLeads = [];
+      try {
+        localLeads = JSON.parse(localStorage.getItem('abc_leads')) || [];
+      } catch (e) {}
+
+      const merged = [...localLeads];
+      data.forEach(remoteLead => {
+        const idx = merged.findIndex(l => l && l.sno === remoteLead.sno);
+        if (idx !== -1) {
+          const remoteTime = remoteLead.timestamp ? new Date(remoteLead.timestamp).getTime() : 0;
+          const localTime = merged[idx].timestamp ? new Date(merged[idx].timestamp).getTime() : 0;
+          if (remoteTime >= localTime) {
+            merged[idx] = remoteLead;
+          }
+        } else {
+          merged.push(remoteLead);
+        }
+      });
+
+      localStorage.setItem('abc_leads', JSON.stringify(merged));
+      console.log("Supabase leads synced to local storage successfully for slip retrieval.");
+    }
+  } catch (err) {
+    console.error("Error syncing leads from Supabase for slip:", err);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Trigger Supabase sync on load
+  syncFromSupabase();
   const searchView = document.getElementById('slip-search-view');
   const cardView = document.getElementById('slip-card-view');
   const retrieveForm = document.getElementById('slip-retrieve-form');
