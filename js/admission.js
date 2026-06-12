@@ -147,37 +147,63 @@ async function syncFromSupabase(renderCallback) {
   try {
     const { data, error } = await supabase.from('admissions').select('*');
     if (error) throw error;
-    if (data && Array.isArray(data)) {
-      let localLeads = [];
-      try {
-        localLeads = JSON.parse(localStorage.getItem('abc_leads')) || [];
-      } catch (e) {}
+    
+    let localLeads = [];
+    try {
+      localLeads = JSON.parse(localStorage.getItem('abc_leads')) || [];
+    } catch (e) {}
 
-      // Merge remote data into local storage (remote newer dates win)
-      const merged = [...localLeads];
-      const mappedData = data.map(mapLeadFromSupabase);
-      mappedData.forEach(remoteLead => {
-        if (!remoteLead) return;
-        const idx = merged.findIndex(l => l && l.sno === remoteLead.sno);
-        if (idx !== -1) {
-          const remoteTime = remoteLead.timestamp ? new Date(remoteLead.timestamp).getTime() : 0;
-          const localTime = merged[idx].timestamp ? new Date(merged[idx].timestamp).getTime() : 0;
-          if (remoteTime >= localTime) {
-            merged[idx] = remoteLead;
-          }
-        } else {
-          merged.push(remoteLead);
+    const remoteLeads = (data && Array.isArray(data)) ? data.map(mapLeadFromSupabase) : [];
+    let localUpdated = false;
+    const merged = [...localLeads];
+    
+    // Merge remote data into local storage (remote newer dates win)
+    remoteLeads.forEach(remoteLead => {
+      if (!remoteLead) return;
+      const idx = merged.findIndex(l => l && l.sno === remoteLead.sno);
+      if (idx !== -1) {
+        const remoteTime = remoteLead.timestamp ? new Date(remoteLead.timestamp).getTime() : 0;
+        const localTime = merged[idx].timestamp ? new Date(merged[idx].timestamp).getTime() : 0;
+        if (remoteTime > localTime) {
+          merged[idx] = remoteLead;
+          localUpdated = true;
         }
-      });
-
-      safeLocalStorageSet('abc_leads', JSON.stringify(merged));
-      if (typeof renderCallback === 'function') {
-        renderCallback();
+      } else {
+        merged.push(remoteLead);
+        localUpdated = true;
       }
-      console.log("Supabase leads synced to local storage successfully.");
+    });
+
+    if (localUpdated) {
+      safeLocalStorageSet('abc_leads', JSON.stringify(merged));
     }
+
+    // Bidirectional upload: Identify local leads missing or newer on remote and push them to Supabase
+    for (const localLead of merged) {
+      if (!localLead || !localLead.sno) continue;
+      const remoteLead = remoteLeads.find(r => r && r.sno === localLead.sno);
+      let needsUpload = false;
+      if (!remoteLead) {
+        needsUpload = true;
+      } else {
+        const localTime = localLead.timestamp ? new Date(localLead.timestamp).getTime() : 0;
+        const remoteTime = remoteLead.timestamp ? new Date(remoteLead.timestamp).getTime() : 0;
+        if (localTime > remoteTime) {
+          needsUpload = true;
+        }
+      }
+      if (needsUpload) {
+        console.log("Uploading local lead to Supabase during sync:", localLead.sno);
+        await saveToSupabase(localLead);
+      }
+    }
+
+    if (typeof renderCallback === 'function') {
+      renderCallback();
+    }
+    console.log("Supabase bidirectional sync completed successfully.");
   } catch (err) {
-    console.error("Error syncing leads from Supabase:", err);
+    console.error("Error syncing leads with Supabase:", err);
   }
 }
 
