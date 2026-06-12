@@ -21,14 +21,14 @@ const FEES_INDEX = {
 // --- Supabase Config & Initialization ---
 const supabaseUrl = 'https://zoonzlmmlheapqentzld.supabase.co';
 const supabaseKey = 'sb_publishable_aOXny0qKbF3Z2xrHBFkQSw_XXetTODe';
-let supabase = null;
+let supabaseClient = null;
 
 function getSupabase() {
-  if (supabase) return supabase;
+  if (supabaseClient) return supabaseClient;
   if (window.supabase) {
-    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
   }
-  return supabase;
+  return supabaseClient;
 }
 
 // Global Supabase Integration Helpers
