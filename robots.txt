@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abc-computer-training-centre.vercel.app/sitemap.xml
