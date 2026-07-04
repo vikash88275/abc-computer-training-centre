@@ -6,16 +6,16 @@
 */
 
 const FEES_INDEX = {
-  "dca": { name: "DCA (Diploma in Computer Applications)", fee: 7500, duration: "1 Year", category: "1y" },
-  "pgdca": { name: "PGDCA (Post Graduate Diploma)", fee: 9500, duration: "1 Year", category: "1y" },
-  "adca": { name: "ADCA (Advanced Diploma)", fee: 6500, duration: "6-12 Months", category: "1y" },
-  "ccc": { name: "CCC (Course on Computer Concepts)", fee: 2500, duration: "3 Months", category: "3m" },
-  "tally": { name: "Tally Prime ERP + GST", fee: 3500, duration: "3 Months", category: "3m" },
-  "msoffice": { name: "MS Office (Advanced)", fee: 2000, duration: "3 Months", category: "3m" },
-  "typing": { name: "Data Entry & Office Automation", fee: 1500, duration: "3 Months", category: "3m" },
-  "programming": { name: "Coding: C, C++, Java, Python", fee: 4500, duration: "3 Months", category: "3m" },
-  "basic": { name: "Basic Computer & Internet (2 Months)", fee: 1200, duration: "2 Months", category: "2m" },
-  "basic_6m": { name: "Basic Computer & Internet (6 Months)", fee: 2500, duration: "6 Months", category: "6m" }
+  "dca": { name: "DCA (Diploma in Computer Applications)", fee: 5000, duration: "1 Year", category: "1y" },
+  "pgdca": { name: "PGDCA (Post Graduate Diploma)", fee: 5000, duration: "1 Year", category: "1y" },
+  "adca": { name: "ADCA (Advanced Diploma)", fee: 5000, duration: "6-12 Months", category: "1y" },
+  "ccc": { name: "CCC (Course on Computer Concepts)", fee: 5000, duration: "3 Months", category: "3m" },
+  "tally": { name: "Tally Prime ERP + GST", fee: 5000, duration: "3 Months", category: "3m" },
+  "msoffice": { name: "MS Office (Advanced)", fee: 5000, duration: "3 Months", category: "3m" },
+  "typing": { name: "Data Entry & Office Automation", fee: 5000, duration: "3 Months", category: "3m" },
+  "programming": { name: "Coding: C, C++, Java, Python", fee: 5000, duration: "3 Months", category: "3m" },
+  "basic": { name: "Basic Computer & Internet (2 Months)", fee: 5000, duration: "2 Months", category: "2m" },
+  "basic_6m": { name: "Basic Computer & Internet (6 Months)", fee: 5000, duration: "6 Months", category: "6m" }
 };
 
 // --- Supabase Config & Initialization ---
@@ -111,6 +111,39 @@ async function deleteFromSupabase(sno) {
   } catch (err) {
     console.error("Error deleting lead from Supabase:", err);
   }
+}
+
+// Image compression helper using canvas
+function compressImage(file, maxWidth, maxHeight, quality, callback) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      let width = img.width;
+      let height = img.height;
+      
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      if (height > maxHeight) {
+        width = Math.round((width * maxHeight) / height);
+        height = maxHeight;
+      }
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+      callback(compressedBase64);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 // Safe localStorage.setItem with QuotaExceededError handling and image-stripping fallback for abc_leads
@@ -274,17 +307,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const photoPreviewBox = document.getElementById('photo-preview-box');
   let studentPhotoBase64 = "";
 
-  // Signature canvas drawing elements
-  const sigCanvas = document.getElementById('sig-canvas');
-  const sigClearBtn = document.getElementById('btn-sig-clear');
-  let isDrawing = false;
-  let hasDrawn = false;
-  let sigCtx = null;
+  // Signature upload elements
+  const signatureUploadInput = document.getElementById('form-signature-upload');
+  const signatureUploadTriggerBtn = document.getElementById('btn-signature-upload-trigger');
+  const signaturePreviewBox = document.getElementById('signature-preview-box');
+  let signatureImgBase64 = "";
 
   // Fee calculation elements
   const inputTotalFee = document.getElementById('form-total-fee');
   const inputPaidFee = document.getElementById('form-paid-fee');
   const inputDueFee = document.getElementById('form-due-fee');
+  if (inputTotalFee) {
+    inputTotalFee.value = 5000;
+  }
 
   // Helper to switch active panel
   function switchPanel(activePanel) {
@@ -319,8 +354,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       studentPhotoBase64 = "";
       if (photoPreviewBox) photoPreviewBox.innerHTML = '<span>PHOTO PREVIEW</span>';
+      signatureImgBase64 = "";
+      if (signaturePreviewBox) signaturePreviewBox.innerHTML = '<span>SIGNATURE PREVIEW</span>';
       if (admissionForm) admissionForm.reset();
-      clearSignatureCanvas();
+      if (inputTotalFee) inputTotalFee.value = 5000;
 
       // Auto generate Serial Number based on max existing + 1
       const formTitle = document.getElementById('admission-form-title');
@@ -422,84 +459,33 @@ document.addEventListener('DOMContentLoaded', () => {
     photoUploadInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
-        if (file.size > 2 * 1024 * 1024) {
-          alert("Image size should not exceed 2MB.");
-          photoUploadInput.value = "";
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          studentPhotoBase64 = event.target.result;
+        compressImage(file, 300, 360, 0.8, (compressedBase64) => {
+          studentPhotoBase64 = compressedBase64;
           if (photoPreviewBox) {
-            photoPreviewBox.innerHTML = `<img src="${studentPhotoBase64}" alt="Student Photo">`;
+            photoPreviewBox.innerHTML = `<img src="${studentPhotoBase64}" alt="Student Photo" style="width:100%; height:100%; object-fit:cover;">`;
           }
-        };
-        reader.readAsDataURL(file);
+        });
       }
     });
   }
 
-  // --- Signature Canvas Pad Logic ---
-  // Clear Canvas
-  function clearSignatureCanvas() {
-    if (sigCtx && sigCanvas) {
-      sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
-      hasDrawn = false;
-    }
+  // --- Signature Upload Handling ---
+  if (signatureUploadTriggerBtn && signatureUploadInput) {
+    signatureUploadTriggerBtn.addEventListener('click', () => signatureUploadInput.click());
   }
 
-  if (sigCanvas) {
-    sigCtx = sigCanvas.getContext('2d');
-    sigCtx.strokeStyle = '#0f172a';
-    sigCtx.lineWidth = 2.5;
-    sigCtx.lineCap = 'round';
-
-    if (sigClearBtn) {
-      sigClearBtn.addEventListener('click', clearSignatureCanvas);
-    }
-
-    // Touch and mouse drawing listeners
-    function getCanvasCoordinates(e) {
-      const rect = sigCanvas.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
-      };
-    }
-
-    function startDrawing(e) {
-      isDrawing = true;
-      hasDrawn = true;
-      const coords = getCanvasCoordinates(e);
-      sigCtx.beginPath();
-      sigCtx.moveTo(coords.x, coords.y);
-      e.preventDefault();
-    }
-
-    function draw(e) {
-      if (!isDrawing) return;
-      const coords = getCanvasCoordinates(e);
-      sigCtx.lineTo(coords.x, coords.y);
-      sigCtx.stroke();
-      e.preventDefault();
-    }
-
-    function stopDrawing() {
-      isDrawing = false;
-    }
-
-    // Mouse events
-    sigCanvas.addEventListener('mousedown', startDrawing);
-    sigCanvas.addEventListener('mousemove', draw);
-    window.addEventListener('mouseup', stopDrawing);
-
-    // Touch events for mobile support
-    sigCanvas.addEventListener('touchstart', startDrawing, { passive: false });
-    sigCanvas.addEventListener('touchmove', draw, { passive: false });
-    window.addEventListener('touchend', stopDrawing);
+  if (signatureUploadInput) {
+    signatureUploadInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        compressImage(file, 300, 100, 0.7, (compressedBase64) => {
+          signatureImgBase64 = compressedBase64;
+          if (signaturePreviewBox) {
+            signaturePreviewBox.innerHTML = `<img src="${signatureImgBase64}" alt="Student Signature" style="width:100%; height:100%; object-fit:contain;">`;
+          }
+        });
+      }
+    });
   }
 
   // --- Dynamic Fee calculation and course listener ---
@@ -556,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const email = document.getElementById('form-email').value.trim();
       const totalFee = parseFloat(inputTotalFee.value) || 0;
       const paidFee = parseFloat(inputPaidFee.value) || 0;
-      const sigText = document.getElementById('form-signature-text').value.trim();
+
 
       // Course Selection verification
       let selectedCourseVal = "";
@@ -606,15 +592,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      if (!sigText) {
-        alert("Please sign your name in the Student Signature field.");
+      if (!signatureImgBase64) {
+        alert("Please upload a student signature image.");
         return;
-      }
-
-      // Prepare signatures
-      let signatureImgBase64 = "";
-      if (hasDrawn && sigCanvas) {
-        signatureImgBase64 = sigCanvas.toDataURL();
       }
 
       const dueFee = Math.max(0, totalFee - paidFee);
@@ -640,7 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paidFee,
         dueFee,
         photo: studentPhotoBase64,
-        signatureText: sigText,
+        signatureText: "Uploaded",
         signatureImg: signatureImgBase64,
         timestamp: new Date().toISOString()
       };
@@ -849,7 +829,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (admissionForm) admissionForm.reset();
-    clearSignatureCanvas();
+    signatureImgBase64 = "";
+    if (signaturePreviewBox) signaturePreviewBox.innerHTML = '<span>SIGNATURE PREVIEW</span>';
 
     const formTitle = document.getElementById('admission-form-title');
     if (formTitle) formTitle.textContent = "Edit Student Enrollment";
@@ -878,36 +859,23 @@ document.addEventListener('DOMContentLoaded', () => {
     inputPaidFee.value = lead.paidFee || 0;
     calculateDueFee();
 
-    document.getElementById('form-signature-text').value = lead.signatureText || "";
-    if (lead.signatureImg && sigCanvas) {
-      const ctx = sigCanvas.getContext('2d');
-      const img = new Image();
-      img.onload = function() {
-        ctx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
-        ctx.drawImage(img, 0, 0);
-        hasDrawn = true;
-      };
-      img.src = lead.signatureImg;
-    } else {
-      hasDrawn = false;
-      const sb = getSupabase();
-      if (sb && lead.sno) {
-        sb.from('admissions').select('signatureimg').eq('sno', lead.sno).single()
-          .then(({ data, error }) => {
-            if (!error && data && data.signatureimg) {
-              lead.signatureImg = data.signatureimg;
-              if (sigCanvas) {
-                const ctx = sigCanvas.getContext('2d');
-                const img = new Image();
-                img.onload = function() {
-                  ctx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
-                  ctx.drawImage(img, 0, 0);
-                  hasDrawn = true;
-                };
-                img.src = data.signatureimg;
+    signatureImgBase64 = lead.signatureImg || "";
+    if (signaturePreviewBox) {
+      if (lead.signatureImg) {
+        signaturePreviewBox.innerHTML = `<img src="${lead.signatureImg}" alt="Preview" style="width:100%; height:100%; object-fit:contain;">`;
+      } else {
+        signaturePreviewBox.innerHTML = '<span>SIGNATURE PREVIEW</span>';
+        const sb = getSupabase();
+        if (sb && lead.sno) {
+          sb.from('admissions').select('signatureimg').eq('sno', lead.sno).single()
+            .then(({ data, error }) => {
+              if (!error && data && data.signatureimg) {
+                lead.signatureImg = data.signatureimg;
+                signatureImgBase64 = data.signatureimg;
+                signaturePreviewBox.innerHTML = `<img src="${data.signatureimg}" alt="Preview" style="width:100%; height:100%; object-fit:contain;">`;
               }
-            }
-          });
+            });
+        }
       }
     }
 

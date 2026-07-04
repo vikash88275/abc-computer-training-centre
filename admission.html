@@ -233,7 +233,7 @@
           <div class="form-group-grid form-grid-3" style="background: var(--neutral-light); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--neutral-border); margin-bottom: 2rem;">
             <div class="form-group">
               <label for="form-total-fee" style="font-weight: 700; color: var(--neutral-darker);">Total Course Fee (&#8377;) *</label>
-              <input type="number" id="form-total-fee" class="form-control" style="background: white;" required>
+              <input type="number" id="form-total-fee" class="form-control" style="background: white;" value="5000" required>
             </div>
             <div class="form-group">
               <label for="form-paid-fee" style="font-weight: 700; color: var(--primary);">Amount Paid Now (&#8377;) *</label>
@@ -254,13 +254,16 @@
             </div>
           </div>
 
-          <!-- Signature Pad -->
-          <div class="form-group" style="margin-bottom: 2.5rem;">
-            <label for="form-signature-text" style="font-weight: 700; display: block; margin-bottom: 0.5rem;">Student Signature *</label>
-            <input type="text" id="form-signature-text" class="form-control" placeholder="Type your full name as signature validation..." required style="margin-bottom: 1rem;">
-            <label style="font-weight: 600; display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--neutral-gray);">Or Draw Signature below:</label>
-            <canvas id="sig-canvas" width="450" height="120" style="border: 1px solid var(--neutral-border); border-radius: var(--radius-md); background: white; cursor: crosshair; display: block; max-width: 100%;"></canvas>
-            <button type="button" id="btn-sig-clear" class="btn btn-secondary" style="margin-top: 0.5rem; padding: 0.35rem 1rem; font-size: 0.8rem;">Clear Drawing</button>
+          <!-- Signature Upload Block -->
+          <div class="form-group-grid form-grid-photo-split" style="align-items: center; margin-top: 1rem; margin-bottom: 2.5rem;">
+            <div class="form-group">
+              <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">Student Signature (Upload Image) *</label>
+              <input type="file" id="form-signature-upload" accept="image/*" style="display: none;">
+              <button type="button" class="btn btn-secondary" id="btn-signature-upload-trigger" style="width: 100%; justify-content: center; padding: 0.75rem;">Upload Signature</button>
+            </div>
+            <div id="signature-preview-box" class="receipt-photo-box" style="width: 150px; height: 55px; border: 1.5px dashed var(--neutral-border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--neutral-gray); font-weight: 600; background: var(--neutral-light); text-align: center; margin-left: auto;">
+              <span>SIGNATURE PREVIEW</span>
+            </div>
           </div>
 
           <button type="submit" class="btn btn-primary" style="width: 100%; text-align: center; justify-content: center; padding: 0.9rem; font-size: 1.1rem;">Submit & Print Receipt</button>
