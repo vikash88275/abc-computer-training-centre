@@ -191,7 +191,7 @@ async function syncFromSupabase(renderCallback) {
     return;
   }
   try {
-    const { data, error } = await sb.from('admissions').select('*');
+    const { data, error } = await sb.from('admissions').select('sno, date, name, father, mother, dob, qualification, address, aadhar, paymentstatus, mobile, email, courseid, coursename, coursecategory, totalfee, paidfee, duefee, signaturetext, timestamp');
     if (error) throw error;
     
     let localLeads = [];
@@ -212,7 +212,15 @@ async function syncFromSupabase(renderCallback) {
         const remoteTime = remoteLead.timestamp ? new Date(remoteLead.timestamp).getTime() : 0;
         const localTime = merged[idx].timestamp ? new Date(merged[idx].timestamp).getTime() : 0;
         if (remoteTime > localTime) {
-          merged[idx] = remoteLead;
+          // Preserve local photo/signature if remote is missing/empty
+          const preservedPhoto = remoteLead.photo || merged[idx].photo || "";
+          const preservedSig = remoteLead.signatureImg || merged[idx].signatureImg || "";
+          
+          merged[idx] = {
+            ...remoteLead,
+            photo: preservedPhoto,
+            signatureImg: preservedSig
+          };
           localUpdated = true;
         }
       } else {
