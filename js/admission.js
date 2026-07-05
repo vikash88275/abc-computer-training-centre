@@ -22,6 +22,8 @@ const FEES_INDEX = {
 const supabaseUrl = 'https://zoonzlmmlheapqentzld.supabase.co';
 const supabaseKey = 'sb_publishable_aOXny0qKbF3Z2xrHBFkQSw_XXetTODe';
 let supabaseClient = null;
+let isSyncCompleted = false;
+let syncedLeads = [];
 
 function getSupabase() {
   if (supabaseClient) return supabaseClient;
@@ -184,7 +186,10 @@ function safeLocalStorageSet(key, value) {
 
 async function syncFromSupabase(renderCallback) {
   const sb = getSupabase();
-  if (!sb) return;
+  if (!sb) {
+    isSyncCompleted = true;
+    return;
+  }
   try {
     const { data, error } = await sb.from('admissions').select('*');
     if (error) throw error;
@@ -195,6 +200,7 @@ async function syncFromSupabase(renderCallback) {
     } catch (e) {}
 
     const remoteLeads = (data && Array.isArray(data)) ? data.map(mapLeadFromSupabase) : [];
+    syncedLeads = remoteLeads;
     let localUpdated = false;
     const merged = [...localLeads];
     
@@ -245,6 +251,8 @@ async function syncFromSupabase(renderCallback) {
     console.log("Supabase bidirectional sync completed successfully.");
   } catch (err) {
     console.error("Error syncing leads with Supabase:", err);
+  } finally {
+    isSyncCompleted = true;
   }
 }
 
@@ -346,7 +354,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Panels Navigation ---
   if (btnSelectNew) {
-    btnSelectNew.addEventListener('click', () => {
+    btnSelectNew.addEventListener('click', async () => {
+      // If sync from Supabase is still in progress, wait for it to finish to prevent duplicate S.Nos
+      if (!isSyncCompleted) {
+        const originalText = btnSelectNew.textContent;
+        btnSelectNew.textContent = "Syncing... Please wait";
+        btnSelectNew.disabled = true;
+        
+        let attempts = 0;
+        while (!isSyncCompleted && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        btnSelectNew.textContent = originalText;
+        btnSelectNew.disabled = false;
+      }
+
       // Reset form variables and inputs first (so it doesn't wipe out auto-filled values)
       editingStudentSno = null;
       const formSno = document.getElementById('form-sno');
@@ -393,10 +417,21 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
       currentLeads = [];
     }
+
+    // Combine local storage leads and cached remote leads
+    const allLeads = [...currentLeads];
+    if (Array.isArray(syncedLeads)) {
+      syncedLeads.forEach(sl => {
+        if (sl && sl.sno && !allLeads.some(al => al && al.sno === sl.sno)) {
+          allLeads.push(sl);
+        }
+      });
+    }
+
     let maxNum = 0; // Starting number will be 1
-    currentLeads.forEach(lead => {
+    allLeads.forEach(lead => {
       if (lead && lead.sno) {
-        let numStr = lead.sno.toString();
+        let numStr = lead.sno.toString().toUpperCase().trim();
         if (numStr.startsWith('ABC-2026-')) {
           numStr = numStr.replace('ABC-2026-', '');
         }
