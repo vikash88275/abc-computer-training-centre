@@ -373,12 +373,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Determine course duration text based on course category
     let durationText = "3 Months";
-    if (lead.courseCategory === '1y') {
-      durationText = "1 Year";
-    } else if (lead.courseCategory === '6m') {
-      durationText = "6 Months";
-    } else if (lead.courseCategory === '2m') {
-      durationText = "2 Months";
+    if (lead.courseCategory) {
+      const cats = lead.courseCategory.split(',');
+      const durations = cats.map(cat => {
+        const c = cat.trim();
+        if (c === '1y') return "1 Year";
+        if (c === '6m') return "6 Months";
+        if (c === '2m') return "2 Months";
+        return "3 Months";
+      });
+      durationText = [...new Set(durations)].join(', ');
     } else if (lead.courseId === 'adca') {
       durationText = "6-12 Months";
     }

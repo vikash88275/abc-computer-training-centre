@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Dynamic Fee calculation and course listener ---
-  const courseRadios = document.getElementsByName('course-choice');
+  const courseCheckboxes = document.getElementsByName('course-choice');
   
   function calculateDueFee() {
     if (inputTotalFee && inputPaidFee && inputDueFee) {
@@ -541,16 +541,31 @@ document.addEventListener('DOMContentLoaded', () => {
     inputPaidFee.addEventListener('input', calculateDueFee);
   }
 
-  courseRadios.forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      const courseVal = e.target.value;
-      if (FEES_INDEX[courseVal]) {
-        if (inputTotalFee) {
-          inputTotalFee.value = FEES_INDEX[courseVal].fee;
-          calculateDueFee();
+  function updateDefaultFeeFromSelection() {
+    let totalSum = 0;
+    let checkedCount = 0;
+    courseCheckboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        checkedCount++;
+        const courseVal = checkbox.value;
+        if (FEES_INDEX[courseVal]) {
+          totalSum += FEES_INDEX[courseVal].fee;
         }
       }
     });
+    
+    if (inputTotalFee) {
+      if (checkedCount > 0) {
+        inputTotalFee.value = totalSum;
+      } else {
+        inputTotalFee.value = 5000;
+      }
+      calculateDueFee();
+    }
+  }
+
+  courseCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateDefaultFeeFromSelection);
   });
 
   // --- Validation and Submit New Form ---
@@ -580,10 +595,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
       // Course Selection verification
-      let selectedCourseVal = "";
-      courseRadios.forEach(radio => {
-        if (radio.checked) selectedCourseVal = radio.value;
+      const selectedCourses = [];
+      courseCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          selectedCourses.push(checkbox.value);
+        }
       });
+
+      if (selectedCourses.length === 0) {
+        alert("Please select at least one course.");
+        return;
+      }
+
+      const courseIdList = selectedCourses.join(',');
+      const courseNameList = selectedCourses.map(id => FEES_INDEX[id] ? FEES_INDEX[id].name : id).join(', ');
+      const courseCategoryList = selectedCourses.map(id => FEES_INDEX[id] ? FEES_INDEX[id].category : id).join(',');
 
       // Basic validations
       if (!name || !father || !mother || !dob || !qualification || !address || !paymentStatus) {
@@ -617,11 +643,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      if (!selectedCourseVal) {
-        alert("Please select a course.");
-        return;
-      }
-
       if (totalFee <= 0) {
         alert("Total Fee must be greater than zero.");
         return;
@@ -648,9 +669,9 @@ document.addEventListener('DOMContentLoaded', () => {
         paymentStatus,
         mobile, // password
         email,
-        courseId: selectedCourseVal,
-        courseName: FEES_INDEX[selectedCourseVal].name,
-        courseCategory: FEES_INDEX[selectedCourseVal].category,
+        courseId: courseIdList,
+        courseName: courseNameList,
+        courseCategory: courseCategoryList,
         totalFee,
         paidFee,
         dueFee,
@@ -914,10 +935,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    courseRadios.forEach(radio => {
-      if (radio.value === lead.courseId) {
-        radio.checked = true;
-      }
+    const selectedCourseIds = lead.courseId ? lead.courseId.split(',') : [];
+    courseCheckboxes.forEach(checkbox => {
+      checkbox.checked = selectedCourseIds.includes(checkbox.value);
     });
 
     switchPanel(panelNew);
@@ -1328,11 +1348,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnSelectNew) btnSelectNew.click();
     if (paramCourse) {
       // Trigger course radio option programmatically
-      const targetRadio = document.querySelector(`input[name="course-choice"][value="${paramCourse}"]`);
-      if (targetRadio) {
-        targetRadio.checked = true;
+      const targetCheckbox = document.querySelector(`input[name="course-choice"][value="${paramCourse}"]`);
+      if (targetCheckbox) {
+        targetCheckbox.checked = true;
         // Dispatch change event to calculate fees
-        targetRadio.dispatchEvent(new Event('change'));
+        targetCheckbox.dispatchEvent(new Event('change'));
       }
     }
   } else if (paramAction === 'check') {
@@ -1365,15 +1385,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Determine course duration text based on course category
     let durationText = lead.duration || "";
     if (!durationText) {
-      durationText = "3 Months";
-      if (lead.courseCategory === '1y') {
-        durationText = "1 Year";
-      } else if (lead.courseCategory === '6m') {
-        durationText = "6 Months";
-      } else if (lead.courseCategory === '2m') {
-        durationText = "2 Months";
+      if (lead.courseCategory) {
+        const cats = lead.courseCategory.split(',');
+        const durations = cats.map(cat => {
+          const c = cat.trim();
+          if (c === '1y') return "1 Year";
+          if (c === '6m') return "6 Months";
+          if (c === '2m') return "2 Months";
+          return "3 Months";
+        });
+        durationText = [...new Set(durations)].join(', ');
       } else if (lead.courseId === 'adca') {
         durationText = "6-12 Months";
+      } else {
+        durationText = "3 Months";
       }
     }
     document.getElementById('fee-slip-duration').value = durationText;
